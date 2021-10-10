@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  pymud:
+    container_name: pymud
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ./backend:/app/src
+    networks:
+      - web
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/templates:/etc/nginx/templates
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
