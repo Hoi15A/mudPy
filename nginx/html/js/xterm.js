@@ -16,9 +16,12 @@ term.writeln('Press 2: Start new')
 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 
 term.on('key', function (key, e) {
-    myBuffer.push(key);
     if(!del) {
+        myBuffer.push(key);
         term.write(key);
+    }
+    else {
+        myBuffer.pop();
     }
     if (key === '\r') {
         let keysEntered = myBuffer.join('');
@@ -29,10 +32,16 @@ term.on('key', function (key, e) {
             term.writeln('\x1b[38;5;10mcommands      |      \x1b[38;5;10mexplanations')
             term.writeln('\x1B[0mhelp          |      shows help menu with commands')
             term.writeln('\x1B[0msubmit        |      submits code for evaluation')
+            term.writeln('\x1B[0mtask          |      Shows current task')
             term.writeln('\x1B[0mclear         |      clears the console')
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else if (keysEntered.valueOf() === "submit") {
             document.getElementById("submit").click();
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        } else if (keysEntered.valueOf() === "task") {
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task:')
+            // TODO retrieve room data
+            term.writeln('\x1b[0mDo xy task')
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else if (keysEntered.valueOf() === "clear") {
             term.write('\x1b[2K\r');
@@ -49,6 +58,7 @@ term.on('key', function (key, e) {
         term.writeln('\x1b[38;5;33mYour story continues here\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         start = false;
+        myBuffer = [];
     } else if (key === '2' && Boolean(start)) {
         term.clear();
         term.write('\r');
@@ -56,6 +66,7 @@ term.on('key', function (key, e) {
         term.writeln('\x1b[38;5;33mYour story begins here\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         start = false;
+        myBuffer = [];
     }
 });
 
