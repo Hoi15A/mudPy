@@ -5,13 +5,13 @@
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Hello Bulma!</title>
     <link href="css/bulma.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/midnight.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body class="has-background-grey">
 
@@ -45,6 +45,10 @@
             </div>
             <div class="column is-half">
                 <pre id="map"></pre>
+                <div class="columns" id="gameDiv">
+                    <div class="column"><p class="is-primary">Time: <span id="timer">10</span></p></div>
+                    <div class="column"><p class="is-primary">Score: <span id="score">0</span></p></div>
+                </div>
             </div>
         </div>
     </div>
@@ -65,10 +69,8 @@
     <div class="container">
         <div class="columns">
             <div class="column is-half" id="console">
-
             </div>
             <div class="column is-half">
-                tasks
             </div>
         </div>
     </div>
@@ -85,4 +87,5 @@
 <script src="js/xterm.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/map.js"></script>
+<script src="js/score.js"></script>
 </html>
