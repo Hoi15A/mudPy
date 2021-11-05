@@ -34,6 +34,10 @@ term.on('key', function (key, e) {
             term.writeln('\x1B[0msubmit        |      submits code for evaluation')
             term.writeln('\x1B[0mtask          |      Shows current task')
             term.writeln('\x1B[0mclear         |      clears the console')
+            term.writeln('\x1B[0msouth         |      move south')
+            term.writeln('\x1B[0mnorth         |      move north')
+            term.writeln('\x1B[0mwest          |      move west')
+            term.writeln('\x1B[0meast          |      move east')
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else if (keysEntered.valueOf() === "submit") {
             document.getElementById("submit").click();
@@ -46,6 +50,30 @@ term.on('key', function (key, e) {
         } else if (keysEntered.valueOf() === "clear") {
             term.write('\x1b[2K\r');
             term.clear();
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        } else if (keysEntered.valueOf() === "north") {
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going north')
+            // TODO retrieve room data
+            term.writeln('\x1b[0mYou moved north')
+            // TODO move player
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        } else if (keysEntered.valueOf() === "south") {
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going south')
+            // TODO retrieve room data
+            term.writeln('\x1b[0mYou moved south')
+            // TODO move player
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        } else if (keysEntered.valueOf() === "west") {
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going west')
+            // TODO retrieve room data
+            term.writeln('\x1b[0mYou moved west')
+            // TODO move player
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        } else if (keysEntered.valueOf() === "east") {
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going east')
+            // TODO retrieve room data
+            term.writeln('\x1b[0mYou moved east')
+            // TODO move player
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else {
             term.writeln('\r')

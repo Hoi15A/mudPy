@@ -1,3 +1,9 @@
 #gameDiv{
     font-size: 1.3em;
 }
+
+#map {
+    line-height: 1;
+    height:300px;
+    overflow-x:auto;
+}

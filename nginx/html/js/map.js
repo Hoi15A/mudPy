@@ -5,8 +5,9 @@ let playerPosition = 4;
 
 const firstFloor = [1, 2, 3, 4];
 const secondFloor = [6, 7, 8];
+const thirdFloor = [9,10];
 
-let floors = [firstFloor, secondFloor];
+let floors = [firstFloor, secondFloor, thirdFloor];
 
 const firstFloorAdj = [];
 const secondFloorAdj = [];
@@ -14,13 +15,17 @@ const thirdFloorAdj = ["S"];
 const fourthFloorAdj = [];
 
 const sixthFloorAdj = [];
-const seventhFloorAdj = [];
+const seventhFloorAdj = ["S"];
 const eightFloorAdj = ["N"];
+
+const ninthFloorAdj = ["N"];
+const tenthFloorAdj = [];
 
 let adjacentFloorOne = [firstFloorAdj, secondFloorAdj, thirdFloorAdj, fourthFloorAdj];
 let adjacentFloorTwo = [sixthFloorAdj, seventhFloorAdj, eightFloorAdj];
+let adjacentFloorThree = [ninthFloorAdj, tenthFloorAdj];
 
-let adjacentFloors = [adjacentFloorOne, adjacentFloorTwo];
+let adjacentFloors = [adjacentFloorOne, adjacentFloorTwo, adjacentFloorThree];
 
 function drawVertical(fl, i, map) {
     for (let j = 0; j < 3; j++) {
