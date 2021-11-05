@@ -44,6 +44,14 @@ function drawMap(roomsC, playerP, fl) {
     for (let i = 0, size = fl.length; i < size; i++) {
         let iterations = fl[i].length;
         for (const element of fl[i]) {
+            map.push(" " + element + " ");
+            if (--iterations) {
+                map.push("       ")
+            }
+        }
+        map.push("\n");
+        iterations = fl[i].length;
+        for (const element of fl[i]) {
             if (playerP === element) {
                 map.push("[" + "P" + "]");
             } else if (roomsC.includes(element)) {
