@@ -8,7 +8,7 @@
         "expectedOutput": "Hello World!"
       },
       "available_after": 1635610606,
-      "required_room": null,
+      "required_rooms": null,
       "points": 10,
       "adjacent_rooms": {
         "north": "example2",
@@ -28,7 +28,7 @@
       "name": "Example Room two",
       "puzzle": {},
       "available_after": 1635610696,
-      "required_room": "example",
+      "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,

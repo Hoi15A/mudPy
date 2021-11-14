@@ -8,11 +8,18 @@ fastify.get('/', async () => {
     return { hello: 'world' }
 })
 
+// character creation
+
+// update character location POST /users/:email/characers/:charname/move {direction: "west"}
+// return new character & if move success if not which rooms still required
 
 // Get rooms
-fastify.get('/rooms', async () => {
+fastify.get('/rooms', async (request, reply) => {
+    return rooms.getRooms()
+})
 
-    return null
+fastify.get('/rooms/:roomID', async (request, reply) => {
+    return rooms.getRoom(request.params.roomID)
 })
 
 // Check solution
@@ -46,8 +53,6 @@ fastify.post('/submit/:roomID', async (request, reply) => {
 })
 
 // Get puzzle for room
-
-
 
 fastify.get('/users/:email', async (request, reply) => {
     reply.statusCode = 200

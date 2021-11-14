@@ -5,4 +5,7 @@ module.exports = {
     getRoom: function (roomID) {
         return data.rooms.find(room => room.id === roomID)
     },
+    getRooms: function () {
+        return data.rooms
+    },
 }
