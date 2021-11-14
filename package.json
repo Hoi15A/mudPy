@@ -1,0 +1,19 @@
+{
+  "name": "pymud",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.zhaw.ch/PA21-Python-MUD/application.git"
+  },
+  "author": "albreaus, holzest3",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^3.23.1",
+    "mongodb": "^4.1.4"
+  }
+}

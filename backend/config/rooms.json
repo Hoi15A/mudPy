@@ -1,0 +1,44 @@
+{
+  "rooms": [
+    {
+      "id": "example",
+      "name": "Example Room",
+      "puzzle": {},
+      "available_after": 1635610606,
+      "required_room": null,
+      "points": 10,
+      "adjacent_rooms": {
+        "north": "example2",
+        "south": null,
+        "east": null,
+        "west": null
+      },
+      "room_text": {
+        "enter": "Welcome to the example room",
+        "leave": "You have left the example room",
+        "puzzle_success": "You have completed this rooms challenge, you may now move forward!",
+        "puzzle_fail": "This challenge seems to be harder than you thought, maybe consider a different approach."
+      }
+    },
+    {
+      "id": "example2",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_room": "example",
+      "points": 20,
+      "adjacent_rooms": {
+        "north": null,
+        "south": "example",
+        "east": null,
+        "west": null
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    }
+  ]
+}

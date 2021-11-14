@@ -1,18 +1,20 @@
-FROM python:3.9
+FROM node:16
 
-WORKDIR /app
+# Create app directory
+WORKDIR /usr/src/app
 
-COPY ./Pipfile /app/Pipfile
-COPY ./Pipfile.lock /app/Pipfile.lock
+# Install app dependencies
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# where available (npm@5+)
+COPY ./package.json ./
+COPY ./package-lock.json ./
 
-RUN pip install pipenv
-RUN pipenv install --system --deploy
+RUN npm install
+# If you are building your code for production
+# RUN npm ci --only=production
 
-COPY ./backend /app/src
+# Bundle app source
+COPY ./backend ./
 
-VOLUME /app/src
-
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80", "--proxy-headers"]
-
-# If running behind a proxy like Nginx or Traefik add --proxy-headers
-# CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80", "--proxy-headers"]
+EXPOSE 8080
+CMD [ "node", "index.js" ]
