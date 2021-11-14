@@ -6,9 +6,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - MONGODB_CONNSTRING=mongodb://pymud:MKWoTw2NyksLk3Xd77ckiCBe@mongodb
     restart: always
-    volumes:
-      - ./backend:/app/src
+    networks:
+      - web
+
+  mongodb: # TODO: make this use a volume to actually persistently store data
+    container_name: mongodb_pymud
+    image: mongo:5.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=pymud
+      - MONGO_INITDB_ROOT_PASSWORD=MKWoTw2NyksLk3Xd77ckiCBe
+    ports:
+      - "27017:27017" # Disable in prod, used for debugging
     networks:
       - web
 
