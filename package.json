@@ -13,6 +13,7 @@
   "author": "albreaus, holzest3",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.24.0",
     "fastify": "^3.23.1",
     "mongodb": "^4.1.4"
   }

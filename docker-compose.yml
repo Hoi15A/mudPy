@@ -8,7 +8,12 @@ services:
       dockerfile: Dockerfile
     environment:
       - MONGODB_CONNSTRING=mongodb://pymud:MKWoTw2NyksLk3Xd77ckiCBe@mongodb
+      - SNEKBOX_API=http://snekbox:8060
+      - FASTIFY_LOGGER=false
     restart: always
+    depends_on:
+      - mongodb
+      - snekbox
     networks:
       - web
 
@@ -32,6 +37,8 @@ services:
     volumes:
       - ./nginx/html:/usr/share/nginx/html:ro
       - ./nginx/templates:/etc/nginx/templates
+    depends_on:
+      - pymud
     networks:
       - web
 

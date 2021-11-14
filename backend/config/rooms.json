@@ -3,7 +3,10 @@
     {
       "id": "example",
       "name": "Example Room",
-      "puzzle": {},
+      "puzzle": {
+        "problem": "print Hello World!",
+        "expectedOutput": "Hello World!"
+      },
       "available_after": 1635610606,
       "required_room": null,
       "points": 10,
