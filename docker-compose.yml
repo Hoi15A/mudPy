@@ -35,6 +35,15 @@ services:
     networks:
       - web
 
+  snekbox:
+    container_name: snekbox
+    image: ghcr.io/python-discord/snekbox
+    privileged: true
+    #ipc: none
+    #tty: true
+    networks:
+      - web
+
 networks:
   web:
     external: true

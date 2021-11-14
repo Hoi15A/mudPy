@@ -110,3 +110,36 @@ term.on('keydown', function(event) {
         del = false;
     }
 });
+
+const editor = CodeMirror(document.getElementById("editor"), {
+    theme: "midnight",
+    lineNumbers: true,
+    value: "print(\"Hello, World!\")\n",
+    mode: "python",
+    matchBrackets: true
+});
+
+const button = document.getElementById('submit');
+
+button.addEventListener('click', async _ => {
+    const code = editor.getValue()
+    axios.post('/api/submit/example', {
+        code: code
+    })
+        .then(function (response) {
+            if (response.success) {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mYour solution was correct\x1B[0m')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            }
+            else {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mYour solution was not correct\x1B[0m')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            }
+            console.log(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+});
