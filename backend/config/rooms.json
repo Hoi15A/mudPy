@@ -11,9 +11,9 @@
       "required_rooms": null,
       "points": 10,
       "adjacent_rooms": {
-        "north": "example2",
+        "north": null,
         "south": null,
-        "east": null,
+        "east": "example2",
         "west": null
       },
       "room_text": {
@@ -32,7 +32,47 @@
       "points": 20,
       "adjacent_rooms": {
         "north": null,
-        "south": "example",
+        "south": "example3",
+        "east": null,
+        "west": null
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "problem": "print Hello World!",
+        "expectedOutput": "Hello World!"
+      }
+    },
+    {
+      "id": "example3",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
+        "north": null,
+        "south": null,
+        "east": "example4",
+        "west": null
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    },
+    {
+      "id": "example4",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
+        "north": null,
+        "south": null,
         "east": null,
         "west": null
       },
