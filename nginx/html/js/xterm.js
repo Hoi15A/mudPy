@@ -10,6 +10,7 @@ let del = false;
 //const cl = axios.get('/api/users/email/')
 //rooms = axios.get('api/rooms')
 const task = document.getElementById('task');
+
 const editor = CodeMirror(document.getElementById("editor"), {
     theme: "midnight",
     lineNumbers: true,
@@ -24,12 +25,55 @@ term.writeln('Press 1: Choose character')
 term.writeln('Press 2: Create new character')
 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 
+function menu() {
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ this is the mudpy helpmenu')
+    term.writeln('\x1b[38;5;10mcommands      |      \x1b[38;5;10mexplanations')
+    term.writeln('\x1B[0mhelp          |      shows help menu with commands')
+    term.writeln('\x1B[0msubmit        |      submits code for evaluation')
+    term.writeln('\x1B[0mtask          |      Shows current task')
+    term.writeln('\x1B[0mclear         |      clears the console')
+    term.writeln('\x1B[0msouth         |      move south')
+    term.writeln('\x1B[0mnorth         |      move north')
+    term.writeln('\x1B[0mwest          |      move west')
+    term.writeln('\x1B[0meast          |      move east')
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
+function chooseCharacter() {
+    term.clear();
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mWelcome back python adventurer\x1B[0m')
+    term.writeln('\x1b[38;5;33m1 Samplechar 1\x1B[0m')
+    term.writeln('\x1b[38;5;33m2 Samplechar 2\x1B[0m')
+    //cl.characters
+
+    //chosenChar = cl.characters[0];
+    let cr = ['example'];
+    drawMap(cr, 'example2');
+    task.appendChild(document.createTextNode('print Hello World!\n'));
+    term.writeln('\x1b[38;5;33mYour story continues here\x1B[0m')
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    start = false;
+    myBuffer = [];
+}
+
+function createCharacter() {
+    term.clear();
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mWelcome new python adventurer\x1B[0m')
+    //create endpoint
+    //post for new char
+    term.writeln('\x1b[38;5;33mYour story begins here\x1B[0m')
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    start = false;
+    myBuffer = [];
+}
+
 term.on('key', function (key, e) {
-    if(!del) {
+    if (!del) {
         myBuffer.push(key);
         term.write(key);
-    }
-    else {
+    } else {
         myBuffer.pop();
     }
     if (key === '\r') {
@@ -37,24 +81,14 @@ term.on('key', function (key, e) {
         myBuffer = [];
         keysEntered = keysEntered.replace('\r', '')
         if (keysEntered.valueOf() === "help") {
-            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ this is the mudpy helpmenu')
-            term.writeln('\x1b[38;5;10mcommands      |      \x1b[38;5;10mexplanations')
-            term.writeln('\x1B[0mhelp          |      shows help menu with commands')
-            term.writeln('\x1B[0msubmit        |      submits code for evaluation')
-            term.writeln('\x1B[0mtask          |      Shows current task')
-            term.writeln('\x1B[0mclear         |      clears the console')
-            term.writeln('\x1B[0msouth         |      move south')
-            term.writeln('\x1B[0mnorth         |      move north')
-            term.writeln('\x1B[0mwest          |      move west')
-            term.writeln('\x1B[0meast          |      move east')
-            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            menu();
         } else if (keysEntered.valueOf() === "submit") {
             document.getElementById("submit").click();
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else if (keysEntered.valueOf() === "task") {
-            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task:')
+            term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task: ')
             // TODO retrieve room data
-            let myTask = 'print(\"Hello World!\")\n'
+            let myTask = 'print Hello World!\n'
             term.writeln('\x1b[0mDo task:' + myTask)
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         } else if (keysEntered.valueOf() === "clear") {
@@ -93,76 +127,56 @@ term.on('key', function (key, e) {
             term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         }
     } else if (key === '1' && Boolean(start)) {
-        term.clear();
-        term.write('\r');
-        term.writeln('\x1b[38;5;33mWelcome back python adventurer\x1B[0m')
-        term.writeln('\x1b[38;5;33m1 Samplechar 1\x1B[0m')
-        term.writeln('\x1b[38;5;33m2 Samplechar 2\x1B[0m')
-        //cl.characters
-
-        //chosenChar = cl.characters[0];
-        let cr = ['example'];
-        drawMap(cr, 'example2');
-        task.appendChild(document.createTextNode('print(\"Hello World!\")\n'));
-        term.writeln('\x1b[38;5;33mYour story continues here\x1B[0m')
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-        start = false;
-        myBuffer = [];
+        chooseCharacter();
     } else if (key === '2' && Boolean(start)) {
-        term.clear();
-        term.write('\r');
-        term.writeln('\x1b[38;5;33mWelcome new python adventurer\x1B[0m')
-        //create endpoint
-        //post for new char
-        term.writeln('\x1b[38;5;33mYour story begins here\x1B[0m')
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-        start = false;
-        myBuffer = [];
+        createCharacter();
     }
 });
 
 
 //backspace
-term.on('keydown', function(event) {
+term.on('keydown', function (event) {
     const key = event.key;
     if (key === "Backspace" || key === "Delete") {
-            term.write('\b \b');
-            del = true;
-    }
-    else {
+        term.write('\b \b');
+        del = true;
+    } else {
         del = false;
     }
 });
 
 const button = document.getElementById('submit');
 
+function correctSolution() {
+    term.write('\r');
+    term.writeln('\x1b[0mYour solution was correct\x1B[0m')
+    //let mapSelector = document.getElementById("map")
+    let cr = ['example'];
+    drawMap(cr, 'example2');
+    //score
+    term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
+}
+
 button.addEventListener('click', async _ => {
     const code = editor.getValue()
     //const pp = chosenChar.curentRoom
     //const cr = chosenChar.roomCompletions
-    
+
     axios.post('/api/submit/example', {
         //axios.post('/api/submit/' + pp, {
-            code: code
+        code: code
+    })
+        .then(function (response) {
+            if (response.data.success) {
+                correctSolution();
+            } else {
+                term.write('\r');
+                term.writeln('\x1b[0mYour solution was not correct\x1B[0m')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            }
+            console.log(response);
         })
-            .then(function (response) {
-                if (response.data.success) {
-                    term.write('\r');
-                    term.writeln('\x1b[0mYour solution was correct\x1B[0m')
-                    //let mapSelector = document.getElementById("map")
-                    let cr = ['example'];
-                    drawMap(cr, 'example2');
-                    //score
-                    term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
-                }
-                else {
-                    term.write('\r');
-                    term.writeln('\x1b[0mYour solution was not correct\x1B[0m')
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                }
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        .catch(function (error) {
+            console.log(error);
+        })
 });
