@@ -1,6 +1,6 @@
 const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true });
 const axios = require('axios').default;
-const rooms = require('./rooms')
+const roomUtils = require('./roomUtils')
 const roomsRoute = require('./routes/rooms')
 const usersRoute = require('./routes/users')
 
@@ -19,7 +19,7 @@ fastify.get('/', async () => {
 
 // Check solution
 fastify.post('/submit/:roomID', async (request, reply) => {
-    const room = rooms.getRoom(request.params.roomID)
+    const room = roomUtils.getRoom(request.params.roomID)
     const code = request.body.code
 
     if (!room) {

@@ -17,7 +17,7 @@ services:
     networks:
       - web
 
-  mongodb: # TODO: make this use a volume to actually persistently store data
+  mongodb:
     container_name: mongodb_pymud
     image: mongo:5.0
     environment:
@@ -27,6 +27,8 @@ services:
       - "27017:27017" # Disable in prod, used for debugging
     networks:
       - web
+    volumes:
+      - pymud_mongodb_data:/data/db
 
   nginx:
     container_name: nginx
@@ -54,3 +56,6 @@ services:
 networks:
   web:
     external: true
+
+volumes:
+  pymud_mongodb_data:

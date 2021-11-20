@@ -2,10 +2,10 @@ const { MongoClient } = require("mongodb");
 
 const client = new MongoClient(process.env.MONGODB_CONNSTRING);
 const DATABASE = "pymud"
+const db = client.db(DATABASE)
 
 async function prepDatabase() {
     await client.connect()
-    const db = client.db(DATABASE);
     if (!await db.listCollections({ name: "users" }).hasNext()) {
         await db.createCollection("users", {
             validator: {
@@ -52,7 +52,7 @@ async function prepDatabase() {
                     }
                 }
             }
-        });
+        })
     }
 }
 
@@ -65,21 +65,41 @@ module.exports = {
     addUser: async (user) => {
         await client.connect()
 
-        const db = client.db(DATABASE)
         const users = db.collection('users')
 
         await users.insertOne(user)
         await client.close()
     },
     getUserByEmail: async (email) => {
-        await client.connect();
+        await client.connect()
 
-        const db = client.db(DATABASE)
         const users = db.collection('users')
 
         const user = await users.findOne({ email })
         await client.close()
         return user
+    },
+    createCharacterForUser: async (email, character) => {
+        await client.connect()
+
+        const users = db.collection('users')
+
+        await users.updateOne({ email }, { $push: { characters: character } })
+        await client.close()
+    },
+    getCharacterForUser: async (email, charName) => {
+        await client.connect()
+
+        const users = db.collection('users')
+
+        const user = await users.findOne({ email, "characters.name": charName })
+        if (!user) {
+            await client.close()
+            return null
+        }
+        const character = user.characters.find(char => char.name === charName)
+        await client.close()
+        return character
     }
 }
 
