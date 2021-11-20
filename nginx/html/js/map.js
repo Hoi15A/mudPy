@@ -10,17 +10,18 @@ function drawMap(cr, pp) {
         floor.push(room);
         if (rooms[room].adjacent_rooms.east != null) {
             map.push("  ")
-        }
-        else {
+        } else {
             map.push("\n");
             map.push("   ");
             let iterations = floor.length;
-            for(const element of floor) {
+            for (const element of floor) {
                 console.log(rooms[element].id);
                 if (pp === rooms[element].id) {
                     map.push("[" + "P" + "]");
-                } else if (cr.includes(rooms[element].id)) {
-                    map.push("[" + "X" + "]");
+                } else if (cr !== undefined) {
+                    if (cr.includes(rooms[element].id)) {
+                        map.push("[" + "X" + "]");
+                    }
                 } else {
                     map.push("[" + " " + "]");
                 }
@@ -45,6 +46,7 @@ function drawMap(cr, pp) {
             floor = [];
         }
     }
+
     axios.get('api/rooms').then(resp => {
         let rooms = resp.data;
         console.log(rooms);
