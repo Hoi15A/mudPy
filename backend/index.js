@@ -1,8 +1,11 @@
 const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true });
 const axios = require('axios').default;
-const database = require('./database')
 const rooms = require('./rooms')
+const roomsRoute = require('./routes/rooms')
+const usersRoute = require('./routes/users')
 
+roomsRoute.use(fastify)
+usersRoute.use(fastify)
 
 fastify.get('/', async () => {
     return { hello: 'world' }
@@ -13,14 +16,6 @@ fastify.get('/', async () => {
 // update character location POST /users/:email/characers/:charname/move {direction: "west"}
 // return new character & if move success if not which rooms still required
 
-// Get rooms
-fastify.get('/rooms', async (request, reply) => {
-    return rooms.getRooms()
-})
-
-fastify.get('/rooms/:roomID', async (request, reply) => {
-    return rooms.getRoom(request.params.roomID)
-})
 
 // Check solution
 fastify.post('/submit/:roomID', async (request, reply) => {
@@ -54,28 +49,6 @@ fastify.post('/submit/:roomID', async (request, reply) => {
 
 // Get puzzle for room
 
-fastify.get('/users/:email', async (request, reply) => {
-    reply.statusCode = 200
-    try {
-        const user = await database.getUserByEmail(request.params.email)
-        reply.send(user)
-    } catch (e) {
-        reply.statusCode = 400
-        reply.send({ message: e.message, info: e.errInfo })
-    }
-})
-
-fastify.post('/users', async (request, reply) => {
-    reply.statusCode = 200
-    try {
-        await database.addUser(request.body)
-    } catch (e) {
-        reply.statusCode = 400
-        reply.send({ message: e.message, info: e.errInfo })
-    }
-
-    reply.send({ message: 'ok' })
-})
 
 const start = async () => {
     try {
