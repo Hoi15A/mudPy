@@ -1,13 +1,16 @@
 const terminal = document.getElementById('console');
 const task = document.getElementById('task');
+const button = document.getElementById('submit');
 let myBuffer = [];
 let start = false;
 let chosen = true;
 let created = true;
 let del = false;
-//let rooms = axios.get('api/rooms')
 let characters;
 let character;
+//TODO hardcoded user update this on login
+const userEmail = 'example@students.zhaw.ch';
+const user = '/api/users/' + userEmail;
 
 let term = new Terminal({
     cursorBlink: true,
@@ -56,7 +59,7 @@ function chooseCharacterMenu() {
     term.write('\r');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, choose your Character\x1B[0m')
     let i = 0;
-    axios.get('/api/users/example@students.zhaw.ch').then(resp => {
+    axios.get(user).then(resp => {
         characters = resp.data.characters;
         for (let char in characters) {
             term.write('\r');
@@ -119,9 +122,11 @@ function main() {
                     term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going west')
                     // update character location POST /users/:email/characers/:charname/move {direction: "west"} RETURNS: updated character
                     //check response move success
-                    //still required rooms needed
-                    //const pp = chosenChar.curentRoom
-                    //drawMap(cr ,pp, rooms)
+
+                    //let response = axios.get(user + '/characters/' + character.name)
+                    //let rc = response.roomCompletions;
+                    //let cr = response.currentRoom;
+                    //drawMap(rc, cr);
                     term.writeln('\x1b[0mYou moved west')
                     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
                 } else if (keysEntered.valueOf() === "east") {
@@ -164,7 +169,7 @@ function main() {
                 if (characters[keysEntered] !== 0) {
                     character = characters[keysEntered];
                     chosen = true;
-                    let response = axios.get('/api/users/example@students.zhaw.ch/characters/' + character.name)
+                    let response = axios.get(user + '/characters/' + character.name)
                     let rc = response.roomCompletions;
                     let cr = response.currentRoom;
                     drawMap(rc, cr);
@@ -184,6 +189,10 @@ function main() {
                 createCharacterMenu();
                 created = false;
             }
+            else {
+                term.writeln('\r')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            }
         }
     });
 }
@@ -200,29 +209,26 @@ term.on('keydown', function (event) {
     }
 });
 
-const button = document.getElementById('submit');
-
 function correctSolution() {
     term.write('\r');
     term.writeln('\x1b[0mYour solution was correct\x1B[0m')
-    let cr = ['example'];
-    drawMap(cr, 'example2');
     //score
     term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
 }
 
 button.addEventListener('click', async _ => {
     const code = editor.getValue()
-
-    axios.post('/api/submit/example', {
-        //axios.post('/api/submit/' + pp, {
+    let charData = await axios.get(user + '/characters/' + character.name)
+    let currentPuzzle = charData.currentPuzzle;
+    let currentRoom = charData.currentRoom;
+    axios.post('/api/submit/' + currentRoom + '/' + currentPuzzle, {
         code: code
     })
         .then(function (response) {
             if (response.data.success) {
                 correctSolution();
                 //TODO wait for completedRooms
-                //let response = await axios.get('/api/users/example@students.zhaw.ch/characters/chad3)
+                //let response = await axios.get(user + '/characters/' + character.name)
                 //if((response.roomCompletions').includes(response.currentRoom)) {
                 //    term.write('\r');
                 //    term.writeln('\x1b[0mYou completed the room\x1B[0m')
