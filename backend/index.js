@@ -11,12 +11,6 @@ fastify.get('/', async () => {
     return { hello: 'world' }
 })
 
-// character creation
-
-// update character location POST /users/:email/characers/:charname/move {direction: "west"}
-// return new character & if move success if not which rooms still required
-
-
 // Check solution
 fastify.post('/submit/:roomID', async (request, reply) => {
     const room = roomUtils.getRoom(request.params.roomID)

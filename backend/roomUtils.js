@@ -8,4 +8,7 @@ module.exports = {
     getRooms: function () {
         return data.rooms
     },
+    getNearbyRoom: function (roomID, direction) {
+        return data.rooms.find(room => room.id === roomID).adjacent_rooms[direction]
+    }
 }

@@ -100,6 +100,14 @@ module.exports = {
         const character = user.characters.find(char => char.name === charName)
         await client.close()
         return character
+    },
+    updateCharacterPosition: async (email, charName, position) => {
+        await client.connect()
+
+        const users = db.collection('users')
+        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentRoom": position } })
+        await client.close()
+        return true
     }
 }
 
