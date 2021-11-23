@@ -32,7 +32,7 @@
       "points": 20,
       "adjacent_rooms": {
         "north": null,
-        "south": "example3",
+        "south": "example5",
         "east": null,
         "west": "example"
       },
@@ -51,7 +51,7 @@
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
-        "north": "example2",
+        "north": null,
         "south": null,
         "east": "example5",
         "west": "example4"
@@ -93,10 +93,90 @@
       ],
       "points": 20,
       "adjacent_rooms": {
+        "north": "example2",
+        "south": null,
+        "east": "example6",
+        "west": "example3"
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    },
+    {
+      "id": "example6",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
         "north": null,
+        "south": "example7",
+        "east": null,
+        "west": "example5"
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    },
+    {
+      "id": "example7",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
+        "north": "example6",
         "south": null,
         "east": null,
-        "west": "example3"
+        "west": "example8"
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    },
+    {
+      "id": "example8",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
+        "north": null,
+        "south": null,
+        "east": "example7",
+        "west": "example9"
+      },
+      "room_text": {
+        "enter": "Welcome to the example2 room",
+        "leave": "You have left the example2 room",
+        "puzzle_success": "Congratulations",
+        "puzzle_fail": "Oh no"
+      }
+    },
+    {
+      "id": "example9",
+      "name": "Example Room two",
+      "puzzle": {},
+      "available_after": 1635610696,
+      "required_rooms": ["example"],
+      "points": 20,
+      "adjacent_rooms": {
+        "north": null,
+        "south": null,
+        "east": "example8",
+        "west": null
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
