@@ -66,6 +66,7 @@ function chooseCharacterMenu() {
             term.writeln('\x1b[38;5;33m' + i + ' Character:' + characters[char].name + '\x1B[0m')
             i++
         }
+        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ')
     })
 }
 
@@ -76,8 +77,37 @@ function createCharacterMenu() {
     term.writeln('\x1b[38;5;33mType in your characters name: \x1B[0m')
 }
 
+function move(keysEntered) {
+    let dir = keysEntered.valueOf();
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going ' + dir)
+    axios.post(user + '/characters/' + character.name + '/move', {
+        direction: dir
+    })
+        .then(function (response) {
+            if (response.status === 200) {
+                axios.get(user + '/characters/' + character.name).then(resp => {
+                    drawMap(resp.data.roomCompletions, resp.data.currentRoom);
+                    term.writeln('\x1b[0m' + response.data.message)
+                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                });
+            } else {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
+                term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            }
+        })
+        .catch(function (error) {
+            term.write('\r');
+            term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
+            term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
+            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        })
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
 function main() {
-    term.on('key', function (key, e) {
+    term.on('key', async function (key, e) {
         if (!del) {
             myBuffer.push(key);
             term.write(key);
@@ -107,34 +137,13 @@ function main() {
                 } else if (keysEntered.valueOf() === "startmenu") {
                     startMenu();
                 } else if (keysEntered.valueOf() === "north") {
-                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going north')
-                    // TODO retrieve room data
-                    term.writeln('\x1b[0mYou moved north')
-                    // TODO move player
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                    move(keysEntered);
                 } else if (keysEntered.valueOf() === "south") {
-                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going south')
-                    // TODO retrieve room data
-                    term.writeln('\x1b[0mYou moved south')
-                    // TODO move player
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                    move(keysEntered);
                 } else if (keysEntered.valueOf() === "west") {
-                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going west')
-                    // update character location POST /users/:email/characers/:charname/move {direction: "west"} RETURNS: updated character
-                    //check response move success
-
-                    //let response = axios.get(user + '/characters/' + character.name)
-                    //let rc = response.roomCompletions;
-                    //let cr = response.currentRoom;
-                    //drawMap(rc, cr);
-                    term.writeln('\x1b[0mYou moved west')
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                    move(keysEntered);
                 } else if (keysEntered.valueOf() === "east") {
-                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going east')
-                    // TODO retrieve room data
-                    term.writeln('\x1b[0mYou moved east')
-                    // TODO move player
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                    move(keysEntered);
                 } else {
                     term.writeln('\r')
                     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -164,32 +173,24 @@ function main() {
                         createCharacterMenu();
                     })
             } else if (!Boolean(chosen)) {
-                console.log(keysEntered);
-                console.log(characters[keysEntered]);
                 if (characters[keysEntered] !== 0) {
                     character = characters[keysEntered];
                     chosen = true;
-                    let response = axios.get(user + '/characters/' + character.name)
-                    let rc = response.roomCompletions;
-                    let cr = response.currentRoom;
-                    drawMap(rc, cr);
+                    let response = await axios.get(user + '/characters/' + character.name);
+                    drawMap(response.data.roomCompletions, response.data.currentRoom);
                     //TODO taskcall
                     task.appendChild(document.createTextNode('print Hello World!\n'));
                     term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
                     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                }
-                else {
+                } else {
                     chooseCharacterMenu();
                 }
-            }
-            else if (keysEntered.valueOf() === '1' && Boolean(start)) {
+            } else if (keysEntered.valueOf() === '1' && Boolean(start)) {
                 chooseCharacterMenu();
-                chosen = false;
             } else if (keysEntered.valueOf() === '2' && Boolean(start)) {
                 createCharacterMenu();
                 created = false;
-            }
-            else {
+            } else {
                 term.writeln('\r')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             }
@@ -239,7 +240,6 @@ button.addEventListener('click', async _ => {
                 term.writeln('\x1b[0mYour solution was not correct\x1B[0m')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             }
-            console.log(response);
         })
         .catch(function (error) {
             console.log(error);
