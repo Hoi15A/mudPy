@@ -66,7 +66,7 @@ function chooseCharacterMenu() {
             term.writeln('\x1b[38;5;33m' + i + ' Character:' + characters[char].name + '\x1B[0m')
             i++
         }
-        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     })
 }
 
@@ -106,6 +106,79 @@ function move(keysEntered) {
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
+function coreMain(keysEntered) {
+    if (keysEntered.valueOf() === "help") {
+        menu();
+    } else if (keysEntered.valueOf() === "submit") {
+        document.getElementById("submit").click();
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    } else if (keysEntered.valueOf() === "task") {
+        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task: ')
+        // TODO retrieve room data
+        let myTask = 'print Hello World!\n'
+        term.writeln('\x1b[0mDo task:' + myTask)
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    } else if (keysEntered.valueOf() === "clear") {
+        term.write('\x1b[2K\r');
+        term.clear();
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    } else if (keysEntered.valueOf() === "startmenu") {
+        startMenu();
+    } else if (keysEntered.valueOf() === "north") {
+        move(keysEntered);
+    } else if (keysEntered.valueOf() === "south") {
+        move(keysEntered);
+    } else if (keysEntered.valueOf() === "west") {
+        move(keysEntered);
+    } else if (keysEntered.valueOf() === "east") {
+        move(keysEntered);
+    } else {
+        term.writeln('\r')
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    }
+}
+
+function creator(keysEntered) {
+    axios.post('api/users/example@students.zhaw.ch/characters', {
+        //axios.post('/api/submit/' + pp, {
+        name: keysEntered
+    })
+        .then(function (response) {
+            if (response.status === 210) {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
+                created = true;
+                chooseCharacterMenu();
+            } else {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
+                term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
+                createCharacterMenu();
+            }
+        })
+        .catch(function (error) {
+            term.write('\r');
+            term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
+            term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
+            createCharacterMenu();
+        })
+}
+
+async function choser(keysEntered) {
+    if (characters[keysEntered] !== 0) {
+        character = characters[keysEntered];
+        chosen = true;
+        let response = await axios.get(user + '/characters/' + character.name);
+        drawMap(response.data.roomCompletions, response.data.currentRoom);
+        //TODO taskcall
+        task.appendChild(document.createTextNode('print Hello World!\n'));
+        term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    } else {
+        chooseCharacterMenu();
+    }
+}
+
 function main() {
     term.on('key', async function (key, e) {
         if (!del) {
@@ -119,72 +192,11 @@ function main() {
             myBuffer = [];
             keysEntered = keysEntered.replace('\r', '')
             if (Boolean(created) && Boolean(chosen) && !Boolean(start)) {
-                if (keysEntered.valueOf() === "help") {
-                    menu();
-                } else if (keysEntered.valueOf() === "submit") {
-                    document.getElementById("submit").click();
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                } else if (keysEntered.valueOf() === "task") {
-                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task: ')
-                    // TODO retrieve room data
-                    let myTask = 'print Hello World!\n'
-                    term.writeln('\x1b[0mDo task:' + myTask)
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                } else if (keysEntered.valueOf() === "clear") {
-                    term.write('\x1b[2K\r');
-                    term.clear();
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                } else if (keysEntered.valueOf() === "startmenu") {
-                    startMenu();
-                } else if (keysEntered.valueOf() === "north") {
-                    move(keysEntered);
-                } else if (keysEntered.valueOf() === "south") {
-                    move(keysEntered);
-                } else if (keysEntered.valueOf() === "west") {
-                    move(keysEntered);
-                } else if (keysEntered.valueOf() === "east") {
-                    move(keysEntered);
-                } else {
-                    term.writeln('\r')
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                }
+                coreMain(keysEntered);
             } else if (!Boolean(created)) {
-                axios.post('api/users/example@students.zhaw.ch/characters', {
-                    //axios.post('/api/submit/' + pp, {
-                    name: keysEntered
-                })
-                    .then(function (response) {
-                        if (response.status === 210) {
-                            term.write('\r');
-                            term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
-                            created = true;
-                            chooseCharacterMenu();
-                        } else {
-                            term.write('\r');
-                            term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
-                            term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
-                            createCharacterMenu();
-                        }
-                    })
-                    .catch(function (error) {
-                        term.write('\r');
-                        term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
-                        term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
-                        createCharacterMenu();
-                    })
+                creator(keysEntered);
             } else if (!Boolean(chosen)) {
-                if (characters[keysEntered] !== 0) {
-                    character = characters[keysEntered];
-                    chosen = true;
-                    let response = await axios.get(user + '/characters/' + character.name);
-                    drawMap(response.data.roomCompletions, response.data.currentRoom);
-                    //TODO taskcall
-                    task.appendChild(document.createTextNode('print Hello World!\n'));
-                    term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                } else {
-                    chooseCharacterMenu();
-                }
+                await choser(keysEntered);
             } else if (keysEntered.valueOf() === '1' && Boolean(start)) {
                 chooseCharacterMenu();
             } else if (keysEntered.valueOf() === '2' && Boolean(start)) {
