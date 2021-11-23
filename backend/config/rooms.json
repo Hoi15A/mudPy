@@ -34,7 +34,7 @@
         "north": null,
         "south": "example3",
         "east": null,
-        "west": null
+        "west": "example1"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
@@ -51,10 +51,10 @@
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
-        "north": null,
+        "north": "example2",
         "south": null,
-        "east": "example4",
-        "west": null
+        "east": null,
+        "west": "example4"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
@@ -73,7 +73,7 @@
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": null,
+        "east": "example3",
         "west": null
       },
       "room_text": {

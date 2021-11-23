@@ -1,4 +1,4 @@
-function drawMap(cr, pp) {
+function drawMap(rc, cr) {
     let mapSelector = document.getElementById("map")
     let map = [""];
     let floor = [];
@@ -6,21 +6,28 @@ function drawMap(cr, pp) {
     map.push("\n\n")
 
     function draw(room, rooms) {
-        map.push(" " + rooms[room].id + " ")
-        floor.push(room);
-        if (rooms[room].adjacent_rooms.east != null) {
-            map.push("  ")
-        } else {
-            map.push("\n");
-            map.push("   ");
+        floor.push(rooms[room]);
+        if (rooms[room].adjacent_rooms.east == null) {
+            if(floor[0].adjacent_rooms.west != null) {
+                floor.splice(0, 0, rooms.find(element => element.id === floor[0].adjacent_rooms.west));
+            }
             let iterations = floor.length;
             for (const element of floor) {
-                console.log(rooms[element].id);
-                if (pp === rooms[element].id) {
+                map.push(" " + element.id + "   ")
+            }
+            map.push("\n");
+            map.push("   ");
+            for (const element of floor) {
+                console.log(element)
+                console.log(cr)
+                if (cr == element.id) {
                     map.push("[" + "P" + "]");
-                } else if (cr !== undefined) {
-                    if (cr.includes(rooms[element].id)) {
+                } else if (rc !== undefined) {
+                    if (rc.includes(element.id)) {
                         map.push("[" + "X" + "]");
+                    }
+                    else {
+                        map.push("[" + " " + "]");
                     }
                 } else {
                     map.push("[" + " " + "]");
@@ -34,7 +41,8 @@ function drawMap(cr, pp) {
                 map.push("   ");
                 for (const item of floor) {
                     map.push(" ");
-                    if (rooms[item].adjacent_rooms.south != null) {
+                    console.log("item "+ item);
+                    if (item.adjacent_rooms.south != null) {
                         map.push("|")
                     } else {
                         map.push(" ");
@@ -49,9 +57,9 @@ function drawMap(cr, pp) {
 
     axios.get('api/rooms').then(resp => {
         let rooms = resp.data;
-        console.log(rooms);
+        //console.log(rooms);
         for (let room in rooms) {
-            console.log(room)
+            //console.log(room)
             draw(room, rooms);
         }
         mapSelector.innerHTML = map.join('');
