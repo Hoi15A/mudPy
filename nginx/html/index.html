@@ -13,18 +13,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/mode/python/python.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="js/socket.js"></script>
 </head>
 <body class="has-background-grey-dark">
 
 <nav aria-label="main navigation" class="navbar is-black" role="navigation">
     <div class="navbar-menu is-active" id="navbarBasicExample">
         <div class="navbar-start">
-            <a class="navbar-item">
-                Home
-            </a>
-            <a class="navbar-item">
-                Documentation
-            </a>
         </div>
 
         <div class="navbar-end">
@@ -76,7 +71,22 @@
             </div>
             <div class="column is-one-quarter">
                 <p class="is-primary back has-background-black">Task:<br><span id="task"></span>
-                </p></div>
+                </p>
+                <ul class="pages">
+                    <li class="chat page">
+                        <div class="chatArea">
+                            <ul class="messages"></ul>
+                        </div>
+                        <input class="inputMessage" placeholder="Type here..."/>
+                    </li>
+                    <li class="login page">
+                        <div class="form">
+                            <h3 class="title">What's your nickname?</h3>
+                            <input class="usernameInput" type="text" maxlength="14" />
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </section>
@@ -87,9 +97,10 @@
         </p>
     </div>
 </footer>
-
-</body>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="js/chatclient.js"></script>
 <script src="js/xterm.js"></script>
 <script src="js/map.js"></script>
 <script src="js/score.js"></script>
+</body>
 </html>
