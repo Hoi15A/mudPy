@@ -1,19 +1,4 @@
 $(function() {
-    const connectionOptions = {
-        "force new connection": true,
-        "reconnectionAttempts": "Infinity",
-        "timeout": 10000,
-    };
-
-    //https://stackoverflow.com/questions/28261546/transport-polling-error-with-socket-io
-    const socket = io(connectionOptions);
-
-    console.log('check 1', socket.connected);
-    socket.on('connect', function() {
-        console.log('check 2', socket.connected);
-    });
-
-    //https://github.com/socketio/socket.io/tree/master/examples/chat
     const FADE_TIME = 150; // ms
     const TYPING_TIMER_LENGTH = 400; // ms
     const COLORS = [
@@ -30,6 +15,8 @@ $(function() {
 
     const $loginPage = $('.login.page');        // The login page
     const $chatPage = $('.chat.page');          // The chatroom page
+
+    const socket = io('http://localhost:8081/');
 
     // Prompt for setting a username
     let username;

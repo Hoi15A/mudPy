@@ -17,6 +17,15 @@ services:
     networks:
       - web
 
+  chat:
+    container_name: chat
+    build:
+      context: .
+      dockerfile: Dockerfile2
+    restart: always
+    networks:
+      - web
+
   mongodb:
     container_name: mongodb_pymud
     image: mongo:5.0

@@ -3,27 +3,18 @@ const axios = require('axios').default;
 const roomUtils = require('./roomUtils')
 const roomsRoute = require('./routes/rooms')
 const usersRoute = require('./routes/users')
-const fastifyIO = require('fastify-socket.io')
-
-fastify.register(require('fastify-cors'), {
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-});
-
-fastify.register(fastifyIO, {
-    cors: {
-        origin: "localhost:8080",
-        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
-    },
-});
-
-fastify.get("/", (req, reply) => {
-    fastify.io.emit("hello");
-});
 
 roomsRoute.use(fastify)
 usersRoute.use(fastify)
+
+fastify.get('/', async () => {
+    return { hello: 'world' }
+})
+
+// character creation
+
+// update character location POST /users/:email/characers/:charname/move {direction: "west"}
+// return new character & if move success if not which rooms still required
 
 
 // Check solution
@@ -74,75 +65,3 @@ const start = async () => {
 }
 
 start().then(_ => console.log("Started"))
-
-/*fastify.ready().then(() => {
-    // we need to wait for the server to be ready, else `server.io` is undefined
-    fastify.io.on("connection", (socket) => {
-        console.log(socket)
-        // ...
-    });
-});*/
-
-// Chatroom
-
-let numUsers = 0;
-
-fastify.ready().then(() => {
-    fastify.io.on('connection', (socket) => {
-        let addedUser = false;
-
-        // when the client emits 'new message', this listens and executes
-        socket.on('new message', (data) => {
-            // we tell the client to execute 'new message'
-            socket.broadcast.emit('new message', {
-                username: socket.username,
-                message: data
-            });
-        });
-
-        // when the client emits 'add user', this listens and executes
-        socket.on('add user', (username) => {
-            if (addedUser) return;
-
-            // we store the username in the socket session for this client
-            socket.username = username;
-            ++numUsers;
-            addedUser = true;
-            socket.emit('login', {
-                numUsers: numUsers
-            });
-            // echo globally (all clients) that a person has connected
-            socket.broadcast.emit('user joined', {
-                username: socket.username,
-                numUsers: numUsers
-            });
-        });
-
-        // when the client emits 'typing', we broadcast it to others
-        socket.on('typing', () => {
-            socket.broadcast.emit('typing', {
-                username: socket.username
-            });
-        });
-
-        // when the client emits 'stop typing', we broadcast it to others
-        socket.on('stop typing', () => {
-            socket.broadcast.emit('stop typing', {
-                username: socket.username
-            });
-        });
-
-        // when the user disconnects.. perform this
-        socket.on('disconnect', () => {
-            if (addedUser) {
-                --numUsers;
-
-                // echo globally that this client has left
-                socket.broadcast.emit('user left', {
-                    username: socket.username,
-                    numUsers: numUsers
-                });
-            }
-        });
-    });
-});
