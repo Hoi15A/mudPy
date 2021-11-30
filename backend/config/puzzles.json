@@ -1,0 +1,263 @@
+{
+  "puzzles": [
+    {
+      "id": "p0",
+      "name": "No Puzzle currently",
+      "points": 5,
+      "problem": "No Puzzle currently",
+      "expectedOutput": "54363456344532534534534"
+    },
+    {
+      "id": "p1",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print: Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p2",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "Print the floating point number 7",
+      "expectedOutput": "7.0"
+    },
+    {
+      "id": "p3",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print on a 1st line: First Line<br />On a second line print: Second Line",
+      "expectedOutput": "First line\nSecond line"
+    },
+    {
+      "id": "p4",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p5",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p6",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p7",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p8",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p9",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p10",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p11",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p12",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p1",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p13",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p14",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p15",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p16",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p17",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p18",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p19",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p20",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p21",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p22",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p23",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p24",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p25",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p26",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p27",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p28",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p29",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p30",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p31",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p32",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p33",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p34",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    },
+    {
+      "id": "p35",
+      "name": "Hello World",
+      "points": 5,
+      "problem": "print Hello World!",
+      "expectedOutput": "Hello World!"
+    }
+  ]
+}

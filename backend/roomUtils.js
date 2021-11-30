@@ -10,5 +10,12 @@ module.exports = {
     },
     getNearbyRoom: function (roomID, direction) {
         return data.rooms.find(room => room.id === roomID).adjacent_rooms[direction]
+    },
+    getPuzzlesofRoom: function (roomID) {
+        const pz = []
+        for (var i in data.rooms.find(room => room.id === roomID).puzzles) {
+            pz.push(data.rooms.find(room => room.id === roomID).puzzles[i])
+        }
+        return pz
     }
 }

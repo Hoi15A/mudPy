@@ -1,11 +1,14 @@
 const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true });
 const axios = require('axios').default;
 const roomUtils = require('./roomUtils')
+const puzzleUtils = require('./puzzleUtils');
 const roomsRoute = require('./routes/rooms')
 const usersRoute = require('./routes/users')
+const puzzlesRoute = require('./routes/puzzles');
 
 roomsRoute.use(fastify)
 usersRoute.use(fastify)
+puzzlesRoute.use(fastify)
 
 fastify.get('/', async () => {
     return { hello: 'world' }
@@ -18,12 +21,12 @@ fastify.get('/', async () => {
 
 
 // Check solution
-fastify.post('/submit/:roomID', async (request, reply) => {
-    const room = roomUtils.getRoom(request.params.roomID)
+fastify.post('/submit/:puzzleID', async (request, reply) => {
+    const puzzle = puzzleUtils.getPuzzle(request.params.puzzleID)
     const code = request.body.code
 
-    if (!room) {
-        return reply.code(400).send({ message: 'Room not found' })
+    if (!puzzle) {
+        return reply.code(400).send({ message: 'Puzzle not found' })
     }
 
     if (!code) {
@@ -42,8 +45,8 @@ fastify.post('/submit/:roomID', async (request, reply) => {
 
     return {
         stdout: resp.data.stdout.trim(),
-        expected: room.puzzle.expectedOutput,
-        success: (resp.data.stdout.trim() === room.puzzle.expectedOutput && resp.data.returncode === 0)
+        expected: puzzle.expectedOutput,
+        success: (resp.data.stdout.trim() === puzzle.expectedOutput && resp.data.returncode === 0)
     }
 })
 

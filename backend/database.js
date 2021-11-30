@@ -37,7 +37,20 @@ async function prepDatabase() {
                                         bsonType: "string",
                                         description: "must be a string and is required"
                                     },
+                                    currentPuzzle: {
+                                        bsonType: "string",
+                                        description: "must be a string and is required"
+                                    },
                                     roomCompletions: {
+                                        bsonType: "array",
+                                        description: "must be an array and is required",
+                                        uniqueItems: true,
+                                        items: {
+                                            bsonType: "string",
+                                            description: "must be a string and be unique"
+                                        }
+                                    },
+                                    puzzleCompletions: {
                                         bsonType: "array",
                                         description: "must be an array and is required",
                                         uniqueItems: true,
@@ -106,6 +119,30 @@ module.exports = {
 
         const users = db.collection('users')
         await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentRoom": position } })
+        await client.close()
+        return true
+    },
+    updateCharacterRoomCompletitions: async (email, charName, room) => {
+        await client.connect()
+
+        const users = db.collection('users')
+        await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.roomCompletions": room.id } })
+        await client.close()
+        return true
+    },
+    updateCharacterPuzzleCompletitions: async (email, charName, puzzle) => {
+        await client.connect()
+
+        const users = db.collection('users')
+        await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.puzzleCompletions": puzzle.id } })
+        await client.close()
+        return true
+    },
+    updateCharacterCurrentPuzzle: async (email, charName, puzzle) => {
+        await client.connect()
+
+        const users = db.collection('users')
+        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentPuzzle": puzzle } })
         await client.close()
         return true
     }

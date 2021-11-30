@@ -8,6 +8,7 @@ let created = true;
 let del = false;
 let characters;
 let character;
+
 //TODO hardcoded user update this on login
 const userEmail = 'example@students.zhaw.ch';
 const user = '/api/users/' + userEmail;
@@ -85,10 +86,12 @@ function move(keysEntered) {
     })
         .then(function (response) {
             if (response.status === 200) {
-                axios.get(user + '/characters/' + character.name).then(resp => {
+                axios.get(user + '/characters/' + character.name).then(async resp => {
                     drawMap(resp.data.roomCompletions, resp.data.currentRoom);
                     term.writeln('\x1b[0m' + response.data.message)
                     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                    let puzzle = await axios.get('api/puzzles/' + resp.data.currentPuzzle);
+                    task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
                 });
             } else {
                 term.write('\r');
@@ -165,13 +168,15 @@ function creator(keysEntered) {
 }
 
 async function choser(keysEntered) {
-    if (characters[keysEntered] !== 0) {
-        character = characters[keysEntered];
+    character = characters[keysEntered];
+    if (character !== undefined) {
         chosen = true;
+        term.clear();
         let response = await axios.get(user + '/characters/' + character.name);
         drawMap(response.data.roomCompletions, response.data.currentRoom);
         //TODO taskcall
-        task.appendChild(document.createTextNode('print Hello World!\n'));
+        let puzzle = await axios.get('api/puzzles/' + response.data.currentPuzzle);
+        task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else {
@@ -229,24 +234,40 @@ function correctSolution() {
     term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
 }
 
+async function roomCompletedCheck() {
+    let charData = await axios.get(user + '/characters/' + character.name)
+    if ((charData.data.roomCompletions).includes(charData.data.currentRoom)) {
+        term.write('\r');
+        term.writeln('\x1b[0mYou completed the room\x1B[0m')
+        let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
+        task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    }
+    else {
+        term.write('\r');
+        term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
+        term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
+        let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
+        task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    }
+    return charData;
+}
+
 button.addEventListener('click', async _ => {
     const code = editor.getValue()
+    console.log(code)
     let charData = await axios.get(user + '/characters/' + character.name)
-    let currentPuzzle = charData.currentPuzzle;
-    let currentRoom = charData.currentRoom;
-    axios.post('/api/submit/' + currentRoom + '/' + currentPuzzle, {
+    let currentPuzzle = charData.data.currentPuzzle;
+    console.log(currentPuzzle)
+    axios.post('/api/submit/' + currentPuzzle, {
         code: code
     })
-        .then(function (response) {
+        .then(async function (response) {
             if (response.data.success) {
+                await axios.post(user + '/characters/' + character.name + '/update')
                 correctSolution();
-                //TODO wait for completedRooms
-                //let response = await axios.get(user + '/characters/' + character.name)
-                //if((response.roomCompletions').includes(response.currentRoom)) {
-                //    term.write('\r');
-                //    term.writeln('\x1b[0mYou completed the room\x1B[0m')
-                //    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                //}
+                await roomCompletedCheck();
             } else {
                 term.write('\r');
                 term.writeln('\x1b[0mYour solution was not correct\x1B[0m')

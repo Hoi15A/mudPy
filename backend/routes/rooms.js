@@ -8,4 +8,8 @@ module.exports.use = function(fastify) {
     fastify.get('/rooms/:roomID', async (request, reply) => {
         return rooms.getRoom(request.params.roomID)
     })
+
+    fastify.get('/rooms/:roomID/puzzles', async (request, reply) => {
+        return rooms.getPuzzlesofRoom(request.params.roomID)
+    })
 }

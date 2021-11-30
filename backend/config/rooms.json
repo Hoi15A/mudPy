@@ -3,10 +3,13 @@
     {
       "id": "example",
       "name": "Example Room",
-      "puzzle": {
-        "problem": "print Hello World!",
-        "expectedOutput": "Hello World!"
-      },
+      "puzzles": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5"
+      ],
       "available_after": 1635610606,
       "required_rooms": null,
       "points": 10,
@@ -26,7 +29,13 @@
     {
       "id": "example2",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "p10"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -46,7 +55,13 @@
     {
       "id": "example3",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "p15"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -66,7 +81,13 @@
     {
       "id": "example4",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -86,7 +107,13 @@
     {
       "id": "example5",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p21",
+        "p22",
+        "p23",
+        "p24",
+        "p25"
+      ],
       "available_after": 1635610696,
       "required_rooms": [
         "example"
@@ -108,7 +135,10 @@
     {
       "id": "example6",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p26",
+        "p27"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -128,7 +158,10 @@
     {
       "id": "example7",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p28",
+        "p29"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -148,7 +181,10 @@
     {
       "id": "example8",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p30",
+        "p31"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
@@ -168,7 +204,10 @@
     {
       "id": "example9",
       "name": "Example Room two",
-      "puzzle": {},
+      "puzzles": [
+        "p32",
+        "p33"
+      ],
       "available_after": 1635610696,
       "required_rooms": ["example"],
       "points": 20,
