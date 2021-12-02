@@ -5,6 +5,7 @@ const buttonClear = document.getElementById('clear');
 let myBuffer = [];
 let start = false;
 let chosen = true;
+let deleted = true;
 let created = true;
 let characters;
 let character;
@@ -40,6 +41,7 @@ function startMenu() {
     term.writeln('What would you like to do?')
     term.writeln('Press 1: Choose character')
     term.writeln('Press 2: Create new character')
+    term.writeln('Press 3: Delete a character')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -64,15 +66,7 @@ function chooseCharacterMenu() {
     term.clear();
     term.write('\r');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, choose your Character\x1B[0m')
-    let i = 0;
-    axios.get(user).then(resp => {
-        characters = resp.data.characters;
-        for (let char in characters) {
-            term.writeln('\x1b[38;5;33m' + i + ' Character: ' + characters[char].name + '\x1B[0m')
-            i++
-        }
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-    })
+    listCharacters();
 }
 
 function createCharacterMenu() {
@@ -198,6 +192,55 @@ async function choser(keysEntered) {
     }
 }
 
+function deleteSuccess() {
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mCharacter deleted\x1B[0m')
+    deleted = true;
+    startMenu();
+}
+
+function listCharacters() {
+    let i = 0;
+    axios.get(user).then(resp => {
+        characters = resp.data.characters;
+        for (let char in characters) {
+            term.writeln('\x1b[38;5;33m' + i + ' Character: ' + characters[char].name + '\x1B[0m')
+            i++
+        }
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    })
+}
+
+function deleteCharacterMenu() {
+    start = false;
+    term.clear();
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mWelcome back python adventurer, delete a Character\x1B[0m')
+    listCharacters();
+}
+
+async function deleter(keysEntered) {
+    character = characters[keysEntered];
+    axios.delete('api/users/example@students.zhaw.ch/characters/' + character.name, {
+    })
+        .then(function (response) {
+            if (response.status === 210) {
+                deleteSuccess();
+            } else {
+                term.write('\r');
+                term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
+                term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
+                deleteCharacterMenu();
+            }
+        })
+        .catch(function (error) {
+            term.write('\r');
+            term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
+            term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
+            deleteCharacterMenu();
+        })
+}
+
 function main() {
     term.onData(async function (key, e) {
         myBuffer.push(key);
@@ -206,17 +249,22 @@ function main() {
             let keysEntered = myBuffer.join('');
             myBuffer = [];
             keysEntered = keysEntered.replace('\r', '')
-            if (Boolean(created) && Boolean(chosen) && !Boolean(start)) {
+            if (Boolean(created) && Boolean(chosen) && Boolean(deleted) && !Boolean(start)) {
                 await coreMain(keysEntered);
             } else if (!Boolean(created)) {
                 creator(keysEntered);
             } else if (!Boolean(chosen)) {
                 await choser(keysEntered);
+            } else if (!Boolean(deleted)) {
+                await deleter(keysEntered);
             } else if (keysEntered.valueOf() === '1' && Boolean(start)) {
                 chooseCharacterMenu();
             } else if (keysEntered.valueOf() === '2' && Boolean(start)) {
                 createCharacterMenu();
                 created = false;
+            } else if (keysEntered.valueOf() === '3' && Boolean(start)) {
+                deleteCharacterMenu();
+                deleted = false;
             } else {
                 term.writeln('\r')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')

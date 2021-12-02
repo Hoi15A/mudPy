@@ -100,6 +100,13 @@ module.exports = {
         await users.updateOne({ email }, { $push: { characters: character } })
         await client.close()
     },
+    deleteCharacterForUser: async (email, charName) => {
+        await client.connect()
+
+        const users = db.collection('users')
+        await users.updateOne({ email }, { $pull: { characters: charName} })
+        await client.close()
+    },
     getCharacterForUser: async (email, charName) => {
         await client.connect()
 

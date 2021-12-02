@@ -63,6 +63,20 @@ module.exports.use = function (fastify) {
         }
     })
 
+    fastify.delete('/users/:email/characters/:name', async (request, reply) => {
+        try {
+            const characterExists = await database.getCharacterForUser(request.params.email, request.params.name)
+            if (!characterExists) {
+                reply.code(400).send({ message: "Character doesn't exists" })
+                return
+            }
+            await database.deleteCharacterForUser(request.params.email, request.params.name)
+            reply.code(210).send()
+        } catch (e) {
+            reply.code(400).send({ message: e.message, info: e.errInfo })
+        }
+    })
+
     fastify.get('/users/:email/characters/:name', async (request, reply) => {
         try {
             const character = await database.getCharacterForUser(request.params.email, request.params.name)
