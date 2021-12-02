@@ -81,7 +81,7 @@ function moveSuccess(response) {
         drawMap(resp.data.roomCompletions, resp.data.currentRoom);
         term.writeln('\x1b[0m' + response.data.message)
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-        await replaceTask(charData);
+        await replaceTask(resp);
     });
 }
 
