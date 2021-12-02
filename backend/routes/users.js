@@ -135,10 +135,10 @@ module.exports.use = function (fastify) {
             const room = getRoom(character.currentRoom)
             const puzzle = getPuzzle(character.currentPuzzle)
             const puzzles = getPuzzlesofRoom(room.id)
-            await database.updateCharacterPuzzleCompletitions(request.params.email, request.params.name, puzzle)
+            await database.updateCharacterPuzzleCompletitions(request.params.email, request.params.name, puzzle, puzzle.points, character.points)
             const updCharacter = await database.getCharacterForUser(request.params.email, request.params.name)
             if (check(updCharacter.puzzleCompletions, puzzles)) {
-                await database.updateCharacterRoomCompletitions(request.params.email, request.params.name, room)
+                await database.updateCharacterRoomCompletitions(request.params.email, request.params.name, room, room.points, updCharacter.points)
                 await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, (getPuzzle("p0").id))
                 reply.code(200).send()
             }

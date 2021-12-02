@@ -2,13 +2,38 @@ function drawMap(rc, cr) {
     let mapSelector = document.getElementById("map")
     let map = [""];
     map.push('P = Player, X = completed Rooms')
+    map.push("\n")
+    map.push("<span style=\"color:#04e90c\">" + "k1 = key 1  "  + "</span>"
+        + "<span style=\"color:red\">" + "1 = locked with key #" + "</span>")
     map.push("\n\n")
 
     function drawV(floor, offset) {
         map.push("\n");
+        map.push("   ");
+        for (let i = 0; i < offset; i++) {
+            map.push("            ")
+        }
+        for (const item of floor) {
+            map.push(" ");
+            if (item.keys.length > 0) {
+                map.push("<span style=\"color:#04e90c\">" + item.keys + "</span>");
+                if (item.keys.length === 1) {
+                    map.push(" ");
+                }
+                let keyOffset = 5 - item.keys.length
+                for (let j = 0; j < keyOffset; j++) {
+                    map.push("  ");
+                }
+            } else if (item.adjacent_rooms.south != null) {
+                map.push("|          ")
+            } else {
+                map.push("           ");
+            }
+        }
+        map.push("\n");
         for (let j = 0; j < 3; j++) {
             map.push("   ");
-            for(let i = 0; i < offset; i++) {
+            for (let i = 0; i < offset; i++) {
                 map.push("            ")
             }
             for (const item of floor) {
@@ -27,7 +52,7 @@ function drawMap(rc, cr) {
     function drawH(floor, iterations, offset) {
         map.push("\n");
         map.push("   ");
-        for(let i = 0; i < offset; i++) {
+        for (let i = 0; i < offset; i++) {
             map.push("            ")
         }
         for (const element of floor) {
@@ -36,6 +61,8 @@ function drawMap(rc, cr) {
             } else if (rc !== undefined) {
                 if (rc.includes(element.id)) {
                     map.push("[" + "X" + "]");
+                } else if (element.keys_required.length > 0) {
+                    map.push("[<span style=\"color:red\">" + element.keys_required[0].charAt(1) + "</span>]");
                 } else {
                     map.push("[" + " " + "]");
                 }
@@ -50,7 +77,7 @@ function drawMap(rc, cr) {
 
     function draw(floor, offset) {
         let iterations = floor.length;
-        for(let i = 0; i < offset; i++) {
+        for (let i = 0; i < offset; i++) {
             map.push(" " + "        " + "   ")
         }
         for (const element of floor) {
@@ -72,7 +99,7 @@ function drawMap(rc, cr) {
         let offset = 0;
         for (let room in rooms) {
             let south = rooms[room].adjacent_rooms.south;
-            if(south) {
+            if (south) {
                 let southwest = rooms.find(element => element.id === south).adjacent_rooms.west;
                 if (southwest) {
                     offsetS = 1;
@@ -87,7 +114,7 @@ function drawMap(rc, cr) {
                 }
             }
             let north = rooms[room].adjacent_rooms.north;
-            if(north) {
+            if (north) {
                 let northwest = rooms.find(element => element.id === north).adjacent_rooms.west;
                 if (northwest) {
                     offsetN = 1;
@@ -96,7 +123,7 @@ function drawMap(rc, cr) {
                         offsetN = 2;
                         let northwesterer = rooms.find(element => element.id === northwester).adjacent_rooms.west;
                         if (northwesterer) {
-                                offsetN = 3;
+                            offsetN = 3;
                         }
                     }
                 }
@@ -105,23 +132,21 @@ function drawMap(rc, cr) {
                 floor.push(rooms[room])
             }
             let east = rooms.find(element => element.id === rooms[room].adjacent_rooms.east);
-            if(!east) {
+            if (!east) {
                 eastend = true;
-            }
-            else if (rooms[room].adjacent_rooms.east && (!floor.includes(east))) {
+            } else if (rooms[room].adjacent_rooms.east && (!floor.includes(east))) {
                 floor.push(east)
             }
             let west = rooms.find(element => element.id === rooms[room].adjacent_rooms.west);
-            if(!west) {
+            if (!west) {
                 westend = true;
-            }
-            else if (rooms[room].adjacent_rooms.west && (!floor.includes(west))) {
+            } else if (rooms[room].adjacent_rooms.west && (!floor.includes(west))) {
                 floor.splice(0, 0, west);
             }
-            if (Boolean(westend) && Boolean(eastend) ) {
+            if (Boolean(westend) && Boolean(eastend)) {
                 floors.push(floor);
-                offsetS = offsetS-floor.length+1;
-                offsetN = offsetN-floor.length+1;
+                offsetS = offsetS - floor.length + 1;
+                offsetN = offsetN - floor.length + 1;
                 offset = Math.max(offsetS, offsetN)
                 offsets.push(offset);
                 offsetS = 0;

@@ -129,18 +129,25 @@ module.exports = {
         await client.close()
         return true
     },
-    updateCharacterRoomCompletitions: async (email, charName, room) => {
+    updateCharacterRoomCompletitions: async (email, charName, room, points, pointsChar) => {
         await client.connect()
 
         const users = db.collection('users')
+
+        let score = pointsChar + points
+        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.points": score } })
         await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.roomCompletions": room.id } })
         await client.close()
         return true
     },
-    updateCharacterPuzzleCompletitions: async (email, charName, puzzle) => {
+    updateCharacterPuzzleCompletitions: async (email, charName, puzzle, points, pointsChar) => {
         await client.connect()
 
         const users = db.collection('users')
+
+        let score = pointsChar + points
+        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.points": score } })
+        
         await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.puzzleCompletions": puzzle.id } })
         await client.close()
         return true

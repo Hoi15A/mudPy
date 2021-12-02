@@ -10,7 +10,11 @@
         "p4",
         "p5"
       ],
+      "keys": [
+        "k1"
+      ],
       "available_after": 1635610606,
+      "keys_required": [],
       "required_rooms": null,
       "points": 10,
       "adjacent_rooms": {
@@ -36,7 +40,9 @@
         "p9",
         "p10"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -62,7 +68,12 @@
         "p14",
         "p15"
       ],
+      "keys": [
+        "k2",
+        "k3"
+      ],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -88,7 +99,9 @@
         "p19",
         "p20"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -114,7 +127,9 @@
         "p24",
         "p25"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": ["k1"],
       "required_rooms": [
         "example"
       ],
@@ -139,7 +154,9 @@
         "p26",
         "p27"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -162,7 +179,9 @@
         "p28",
         "p29"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": ["k2"],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -185,7 +204,9 @@
         "p30",
         "p31"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
@@ -208,7 +229,9 @@
         "p32",
         "p33"
       ],
+      "keys": [],
       "available_after": 1635610696,
+      "keys_required": [],
       "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {

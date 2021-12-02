@@ -2,6 +2,7 @@ const terminal = document.getElementById('console');
 const task = document.getElementById('task');
 const buttonSubmit = document.getElementById('submit');
 const buttonClear = document.getElementById('clear');
+const score = document.querySelector('#score');
 let myBuffer = [];
 let start = false;
 let chosen = true;
@@ -220,25 +221,31 @@ function deleteCharacterMenu() {
 }
 
 async function deleter(keysEntered) {
+    deleted = true;
     character = characters[keysEntered];
-    axios.delete('api/users/example@students.zhaw.ch/characters/' + character.name, {
-    })
-        .then(function (response) {
-            if (response.status === 210) {
-                deleteSuccess();
-            } else {
+    if (character !== undefined) {
+        axios.delete('api/users/example@students.zhaw.ch/characters/' + character.name, {})
+            .then(function (response) {
+                if (response.status === 210) {
+                    deleteSuccess();
+                } else {
+                    term.write('\r');
+                    term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
+                    term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
+                    deleteCharacterMenu();
+                }
+            })
+            .catch(function (error) {
                 term.write('\r');
                 term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
-                term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
+                term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
                 deleteCharacterMenu();
-            }
-        })
-        .catch(function (error) {
-            term.write('\r');
-            term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
-            term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
-            deleteCharacterMenu();
-        })
+            })
+    } else {
+        term.write('\r');
+        term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
+        startMenu()
+    }
 }
 
 function main() {
@@ -309,6 +316,7 @@ async function puzzleCompleted(charData) {
 
 async function roomCompletedCheck() {
     let charData = await characterDataCall();
+    score.textContent = charData.data.points;
     if ((charData.data.roomCompletions).includes(charData.data.currentRoom)) {
         await roomCompleted(charData);
     }
