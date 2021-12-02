@@ -134,6 +134,7 @@ async function coreMain(keysEntered) {
         displayCurrentTask(puzzle);
     } else if (keysEntered.valueOf() === "clear") {
         term.clear();
+        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else if (keysEntered.valueOf() === "startmenu") {
         startMenu();
