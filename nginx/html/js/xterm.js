@@ -18,6 +18,10 @@ let term = new Terminal({
     cursorStyle: "bar",
 })
 
+const fitAddon = new FitAddon.FitAddon();
+
+term.loadAddon(fitAddon);
+
 const editor = CodeMirror(document.getElementById("editor"), {
     theme: "midnight",
     lineNumbers: true,
@@ -26,6 +30,9 @@ const editor = CodeMirror(document.getElementById("editor"), {
 });
 
 term.open(terminal);
+// Make the terminal's size and geometry fit the size of #terminal-container
+fitAddon.fit();
+
 startMenu();
 main();
 
@@ -64,7 +71,7 @@ function chooseCharacterMenu() {
         characters = resp.data.characters;
         for (let char in characters) {
             term.write('\r');
-            term.writeln('\x1b[38;5;33m' + i + ' Character:' + characters[char].name + '\x1B[0m')
+            term.writeln('\x1b[38;5;33m' + i + ' Character: ' + characters[char].name + '\x1B[0m')
             i++
         }
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -185,7 +192,7 @@ async function choser(keysEntered) {
 }
 
 function main() {
-    term.on('key', async function (key, e) {
+    term.onData(async function (key, e) {
         if (!del) {
             myBuffer.push(key);
             term.write(key);
@@ -217,7 +224,7 @@ function main() {
 
 
 //backspace
-term.on('keydown', function (event) {
+term.onData(function (event) {
     const key = event.key;
     if (key === "Backspace" || key === "Delete") {
         term.write('\b \b');

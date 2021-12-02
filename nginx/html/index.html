@@ -11,8 +11,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.29.0/theme/midnight.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.63.1/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
+    <script src="https://unpkg.com/xterm@4.15.0/lib/xterm.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.6.0-beta.6/lib/xterm-addon-fit.js"></script>
     <script src="js/socket.js"></script>
 </head>
 <body class="has-background-grey-dark">
@@ -64,7 +65,9 @@
     </div>
     <div class="container">
         <div class="columns">
-            <div class="column is-half" id="console">
+            <div class="column is-half">
+                <div id="console">
+                </div>
             </div>
             <div class="column is-one-quarter">
                 <p class="is-primary back"><span></span></p>
