@@ -1,11 +1,11 @@
 const terminal = document.getElementById('console');
 const task = document.getElementById('task');
-const button = document.getElementById('submit');
+const buttonSubmit = document.getElementById('submit');
+const buttonClear = document.getElementById('clear');
 let myBuffer = [];
 let start = false;
 let chosen = true;
 let created = true;
-let del = false;
 let characters;
 let character;
 
@@ -18,19 +18,17 @@ let term = new Terminal({
     cursorStyle: "bar",
 })
 
-const fitAddon = new FitAddon.FitAddon();
-
-term.loadAddon(fitAddon);
-
 const editor = CodeMirror(document.getElementById("editor"), {
     theme: "midnight",
     lineNumbers: true,
     mode: "python",
-    matchBrackets: true
+    matchBrackets: true,
+    value: ""
 });
 
+const fitAddon = new FitAddon.FitAddon();
+term.loadAddon(fitAddon);
 term.open(terminal);
-// Make the terminal's size and geometry fit the size of #terminal-container
 fitAddon.fit();
 
 startMenu();
@@ -70,7 +68,6 @@ function chooseCharacterMenu() {
     axios.get(user).then(resp => {
         characters = resp.data.characters;
         for (let char in characters) {
-            term.write('\r');
             term.writeln('\x1b[38;5;33m' + i + ' Character: ' + characters[char].name + '\x1B[0m')
             i++
         }
@@ -85,6 +82,22 @@ function createCharacterMenu() {
     term.writeln('\x1b[38;5;33mType in your characters name: \x1B[0m')
 }
 
+function moveSuccess(response) {
+    axios.get(user + '/characters/' + character.name).then(async resp => {
+        drawMap(resp.data.roomCompletions, resp.data.currentRoom);
+        term.writeln('\x1b[0m' + response.data.message)
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        await replaceTask(charData);
+    });
+}
+
+function moveFailed(response) {
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
+    term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
 function move(keysEntered) {
     let dir = keysEntered.valueOf();
     term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going ' + dir)
@@ -93,43 +106,33 @@ function move(keysEntered) {
     })
         .then(function (response) {
             if (response.status === 200) {
-                axios.get(user + '/characters/' + character.name).then(async resp => {
-                    drawMap(resp.data.roomCompletions, resp.data.currentRoom);
-                    term.writeln('\x1b[0m' + response.data.message)
-                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-                    let puzzle = await axios.get('api/puzzles/' + resp.data.currentPuzzle);
-                    task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
-                });
+                moveSuccess(response);
             } else {
-                term.write('\r');
-                term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
-                term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
-                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                moveFailed(response);
             }
         })
         .catch(function (error) {
-            term.write('\r');
-            term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
-            term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
-            term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            moveFailed(response);
         })
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
-function coreMain(keysEntered) {
+async function characterDataCall() {
+    return axios.get(user + '/characters/' + character.name);
+}
+
+async function coreMain(keysEntered) {
     if (keysEntered.valueOf() === "help") {
         menu();
     } else if (keysEntered.valueOf() === "submit") {
-        document.getElementById("submit").click();
+        buttonSubmit.click();
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else if (keysEntered.valueOf() === "task") {
         term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task: ')
-        // TODO retrieve room data
-        let myTask = 'print Hello World!\n'
-        term.writeln('\x1b[0mDo task:' + myTask)
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        let charData = await characterDataCall();
+        let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
+        displayCurrentTask(puzzle);
     } else if (keysEntered.valueOf() === "clear") {
-        term.write('\x1b[2K\r');
         term.clear();
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else if (keysEntered.valueOf() === "startmenu") {
@@ -148,6 +151,13 @@ function coreMain(keysEntered) {
     }
 }
 
+function createSuccess() {
+    term.write('\r');
+    term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
+    created = true;
+    chooseCharacterMenu();
+}
+
 function creator(keysEntered) {
     axios.post('api/users/example@students.zhaw.ch/characters', {
         //axios.post('/api/submit/' + pp, {
@@ -155,10 +165,7 @@ function creator(keysEntered) {
     })
         .then(function (response) {
             if (response.status === 210) {
-                term.write('\r');
-                term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
-                created = true;
-                chooseCharacterMenu();
+                createSuccess();
             } else {
                 term.write('\r');
                 term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
@@ -179,13 +186,12 @@ async function choser(keysEntered) {
     if (character !== undefined) {
         chosen = true;
         term.clear();
-        let response = await axios.get(user + '/characters/' + character.name);
+        let response = await characterDataCall();
         drawMap(response.data.roomCompletions, response.data.currentRoom);
-        //TODO taskcall
         let puzzle = await axios.get('api/puzzles/' + response.data.currentPuzzle);
         task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        displayCurrentTask(puzzle);
     } else {
         chooseCharacterMenu();
     }
@@ -193,18 +199,14 @@ async function choser(keysEntered) {
 
 function main() {
     term.onData(async function (key, e) {
-        if (!del) {
-            myBuffer.push(key);
-            term.write(key);
-        } else {
-            myBuffer.pop();
-        }
+        myBuffer.push(key);
+        term.write(key);
         if (key === '\r') {
             let keysEntered = myBuffer.join('');
             myBuffer = [];
             keysEntered = keysEntered.replace('\r', '')
             if (Boolean(created) && Boolean(chosen) && !Boolean(start)) {
-                coreMain(keysEntered);
+                await coreMain(keysEntered);
             } else if (!Boolean(created)) {
                 creator(keysEntered);
             } else if (!Boolean(chosen)) {
@@ -222,18 +224,6 @@ function main() {
     });
 }
 
-
-//backspace
-term.onData(function (event) {
-    const key = event.key;
-    if (key === "Backspace" || key === "Delete") {
-        term.write('\b \b');
-        del = true;
-    } else {
-        del = false;
-    }
-});
-
 function correctSolution() {
     term.write('\r');
     term.writeln('\x1b[0mYour solution was correct\x1B[0m')
@@ -241,32 +231,48 @@ function correctSolution() {
     term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
 }
 
+function displayCurrentTask(puzzle) {
+    term.writeln('\x1b[0mCurrent Task:\x1B[0m')
+    term.writeln('\x1b[0m' + puzzle.data.problem + '\x1B[0m')
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
+async function replaceTask(charData) {
+    let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
+    task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
+    displayCurrentTask(puzzle);
+}
+
+async function roomCompleted(charData) {
+    term.write('\r');
+    term.writeln('\x1b[0mYou completed the room\x1B[0m')
+    let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
+    task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
+async function puzzleCompleted(charData) {
+    term.write('\r');
+    term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
+    term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
+    await replaceTask(charData);
+}
+
 async function roomCompletedCheck() {
-    let charData = await axios.get(user + '/characters/' + character.name)
+    let charData = await characterDataCall();
     if ((charData.data.roomCompletions).includes(charData.data.currentRoom)) {
-        term.write('\r');
-        term.writeln('\x1b[0mYou completed the room\x1B[0m')
-        let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
-        task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        await roomCompleted(charData);
     }
     else {
-        term.write('\r');
-        term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
-        term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
-        let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
-        task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+        await puzzleCompleted(charData);
     }
     return charData;
 }
 
-button.addEventListener('click', async _ => {
+buttonSubmit.addEventListener('click', async _ => {
     const code = editor.getValue()
-    console.log(code)
-    let charData = await axios.get(user + '/characters/' + character.name)
+    let charData = await characterDataCall();
     let currentPuzzle = charData.data.currentPuzzle;
-    console.log(currentPuzzle)
     axios.post('/api/submit/' + currentPuzzle, {
         code: code
     })
@@ -284,4 +290,8 @@ button.addEventListener('click', async _ => {
         .catch(function (error) {
             console.log(error);
         })
+});
+
+buttonClear.addEventListener('click', async _ => {
+    editor.setValue('')
 });
