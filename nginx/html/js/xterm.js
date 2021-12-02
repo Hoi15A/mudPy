@@ -86,10 +86,10 @@ function moveSuccess(response) {
     });
 }
 
-function moveFailed(response) {
+function moveFailed(error) {
     term.write('\r');
     term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
-    term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
+    term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -107,7 +107,7 @@ function move(keysEntered) {
             }
         })
         .catch(function (error) {
-            moveFailed(response);
+            moveFailed(error);
         })
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
