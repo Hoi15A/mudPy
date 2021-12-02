@@ -38,6 +38,7 @@ main();
 
 function startMenu() {
     start = true;
+    task.textContent = '';
     term.writeln('Welcome to \x1B[1;3;31mmudpy 1.0\x1B[0m')
     term.writeln('What would you like to do?')
     term.writeln('Press 1: Choose character')
