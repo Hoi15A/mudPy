@@ -39,6 +39,7 @@ main();
 function startMenu() {
     start = true;
     task.textContent = '';
+    score.textContent = '0';
     term.writeln('Welcome to \x1B[1;3;31mmudpy 1.0\x1B[0m')
     term.writeln('What would you like to do?')
     term.writeln('Press 1: Choose character')
@@ -188,6 +189,7 @@ async function choser(keysEntered) {
         let puzzle = await axios.get('api/puzzles/' + response.data.currentPuzzle);
         task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
+        score.textContent = response.data.points;
         displayCurrentTask(puzzle);
     } else {
         chooseCharacterMenu();
@@ -250,9 +252,14 @@ async function deleter(keysEntered) {
 }
 
 function main() {
-    term.onData(async function (key, e) {
-        myBuffer.push(key);
-        term.write(key);
+    term.onData(async function (key) {
+        if (key === '\u007F') {
+            term.write('\b \b');
+            myBuffer.pop(key);
+        } else {
+            myBuffer.push(key);
+            term.write(key);
+        }
         if (key === '\r') {
             let keysEntered = myBuffer.join('');
             myBuffer = [];
@@ -306,6 +313,7 @@ async function roomCompleted(charData) {
     let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
     task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    drawMap(charData.data.roomCompletions, charData.data.currentRoom);
 }
 
 async function puzzleCompleted(charData) {

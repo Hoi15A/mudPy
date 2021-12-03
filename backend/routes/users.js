@@ -1,6 +1,7 @@
 const database = require("../database");
 const {getNearbyRoom, getRoom, getPuzzlesofRoom} = require("../roomUtils");
 const {getPuzzle} = require("../puzzleUtils");
+const {getKeysForCharacter} = require("../database");
 
 async function nextPuzzle(roomP, compP) {
     return roomP.filter(
@@ -55,6 +56,7 @@ module.exports.use = function (fastify) {
             character.currentPuzzle = "p1"
             character.roomCompletions = []
             character.puzzleCompletions = []
+            character.keys = []
 
             await database.createCharacterForUser(request.params.email, character)
             reply.code(210).send()
@@ -105,18 +107,33 @@ module.exports.use = function (fastify) {
             const room = getNearbyRoom(character.currentRoom, request.body.direction)
 
             if (room) {
-                await database.updateCharacterPosition(request.params.email, request.params.name, room)
-                const updCharacter = await database.getCharacterForUser(request.params.email, request.params.name)
-                const updRoom = getRoom(updCharacter.currentRoom)
-                const puzzles = getPuzzlesofRoom(updRoom.id)
-                if((updCharacter.roomCompletions).includes(updCharacter.currentRoom)) {
-                    await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, (getPuzzle("p0").id))
-                    reply.code(200).send({ message: "Moved to " + room })
+                let checkedKeys = check(character.keys, ((getRoom(room)).keys_required))
+                console.log((getRoom(room)).keys_required)
+                console.log(character.keys)
+                console.log(checkedKeys)
+                if (checkedKeys) {
+                    await database.updateCharacterPosition(request.params.email, request.params.name, room)
+                    const updCharacter = await database.getCharacterForUser(request.params.email, request.params.name)
+                    const updRoom = getRoom(updCharacter.currentRoom)
+                    const puzzles = getPuzzlesofRoom(updRoom.id)
+                    if ((updCharacter.roomCompletions).includes(updCharacter.currentRoom)) {
+                        await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, (getPuzzle("p0").id))
+                        reply.code(200).send({message: "Moved to " + room})
+                    } else {
+                        let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions);
+                        await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
+                        reply.code(200).send({message: "Moved to " + room})
+                    }
                 }
-                else {
-                    let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions);
-                    await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
-                    reply.code(200).send({ message: "Moved to " + room })
+                else if(!checkedKeys) {
+                    let dif = await nextPuzzle(((getRoom(room)).keys_required), character.keys)
+                    console.log(dif)
+                    if(dif.length > 0) {
+                        reply.code(400).send({ message: "Cannot move to that room, missing keys: " + dif})
+                    }
+                    else {
+                        reply.code(400).send({ message: "Cannot move in that direction" })
+                    }
                 }
             } else {
                 reply.code(400).send({ message: "Cannot move in that direction" })

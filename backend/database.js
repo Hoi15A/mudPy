@@ -58,6 +58,15 @@ async function prepDatabase() {
                                             bsonType: "string",
                                             description: "must be a string and be unique"
                                         }
+                                    },
+                                    keys: {
+                                        bsonType: "array",
+                                        description: "must be an array and is required",
+                                        uniqueItems: true,
+                                        items: {
+                                            bsonType: "string",
+                                            description: "must be a string and be unique"
+                                        }
                                     }
                                 }
                             }
@@ -137,6 +146,11 @@ module.exports = {
         let score = pointsChar + points
         await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.points": score } })
         await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.roomCompletions": room.id } })
+        if(room.keys.length > 0) {
+            for (const element of (room.keys)) {
+                await users.updateOne({email, "characters.name": charName}, {$push: {"characters.$.keys": element}})
+            }
+        }
         await client.close()
         return true
     },

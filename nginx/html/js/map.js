@@ -15,7 +15,7 @@ function drawMap(rc, cr) {
         }
         for (const item of floor) {
             map.push(" ");
-            if (item.keys.length > 0) {
+            if (item.keys.length > 0 && !rc.includes(item.id)) {
                 map.push("<span style=\"color:#04e90c\">" + item.keys + "</span>");
                 if (item.keys.length === 1) {
                     map.push(" ");
