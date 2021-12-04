@@ -22,27 +22,48 @@ fastify.ready().then(() => {
     fastify.io.on('connection', (socket) => {
         let addedUser = false;
         fastify.io.emit("hello");
+        socket.join("some room");
 
         // when the client emits 'new message', this listens and executes
         socket.on('new message', (data) => {
             // we tell the client to execute 'new message'
-            socket.broadcast.emit('new message', {
+            socket.broadcast.to(socket.room).emit('new message', {
                 username: socket.username,
-                message: data
+                message: data,
+                room: socket.room
             });
         });
 
         // when the client emits 'add user', this listens and executes
-        socket.on('add user', (username) => {
+        socket.on('add user', (username, room) => {
             if (addedUser) return;
-
+            socket.join(room);
             // we store the username in the socket session for this client
+            socket.room = room;
             socket.username = username;
             ++numUsers;
             addedUser = true;
             socket.emit('login', {
-                numUsers: numUsers
+                numUsers: numUsers,
+                room: room
             });
+        });
+
+        //listen to roomchange
+        socket.on('change room', (room, oldRoom) => {
+            socket.room = room;
+            socket.leave(oldRoom)
+            socket.join(room);
+        });
+
+        socket.on('join room', (room) => {
+            socket.room = room;
+            socket.join(room);
+        });
+
+        socket.on('leave room', (room) => {
+            socket.room = '';
+            socket.leave(room)
         });
 
         // when the user disconnects.. perform this

@@ -20,7 +20,6 @@ let chosen = true;
 let deleted = true;
 let created = true;
 let chatEnabled = false;
-let chatSubscribed = false;
 let characters;
 let character;
 let chatUsername;
@@ -94,12 +93,13 @@ function createCharacterMenu() {
     term.writeln('\x1b[38;5;33mType in your characters name: \x1B[0m')
 }
 
-function moveSuccess(response) {
+function moveSuccess(response, oldRoom) {
     axios.get(user + '/characters/' + character.name).then(async resp => {
         drawMap(resp.data.roomCompletions, resp.data.currentRoom, resp.data.keys);
         term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         await replaceTask(resp);
+        socket.emit('change room', resp.data.currentRoom, oldRoom);
     });
 }
 
@@ -109,15 +109,16 @@ function moveFailed(error) {
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
-function move(keysEntered) {
+async function move(keysEntered) {
     let dir = keysEntered.valueOf();
     term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ going ' + dir)
+    let oldRoom = await characterDataCall()
     axios.post(user + '/characters/' + character.name + '/move', {
         direction: dir
     })
         .then(function (response) {
             if (response.status === 200) {
-                moveSuccess(response);
+                moveSuccess(response, oldRoom);
             } else {
                 moveFailed(response);
             }
@@ -132,22 +133,25 @@ async function characterDataCall() {
     return axios.get(user + '/characters/' + character.name);
 }
 
-function chatJoin(name) {
+async function chatJoin(name) {
     chatUsername = name;
     // If the username is valid
     if (chatUsername) {
         // Tell the server your username
-        socket.emit('add user', chatUsername);
+        let res = await characterDataCall();
+        socket.emit('add user', chatUsername, res.data.currentRoom);
+        buttonChat.disabled = false;
     }
     buttonChat.classList.remove("is-black");
     chatToggle.textContent = 'ON'
     buttonChat.classList.add("is-dark");
-    chatSubscribed = true;
 }
 
 const addChatMessage = (data, options = {}) => {
     term.writeln('');
-    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + '\x1B[38;5;86m' + data.username + ': \x1B[0m' +
+    term.writeln('\x1B[38;5;226mmudpy chat room: ' +
+        data.room + '\x1B[0m $ ' +
+        '\x1B[38;5;86m' + data.username + ': \x1B[0m' +
         '\x1B[38;5;40m' + data.message + '\x1B[0m');
     if (chatEnabled) {
         term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
@@ -158,7 +162,7 @@ const addChatMessage = (data, options = {}) => {
 
 // Whenever the server emits 'login', log the login message
 socket.on('login', (data) => {
-    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'Welcome to mudpy Chat');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'Welcome to mudpy Chat room' + data.room);
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ');
 });
 
@@ -172,11 +176,12 @@ socket.on('disconnect', () => {
     term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'you have been disconnected');
 });
 
-socket.on('reconnect', () => {
+socket.on('reconnect', async () => {
     term.writeln('');
     term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'you have been reconnected');
     if (chatUsername) {
-        socket.emit('add user', chatUsername);
+        let res = await characterDataCall();
+        socket.emit('add user', chatUsername, res.data.currentRoom);
     }
 });
 
@@ -353,6 +358,7 @@ function main() {
                 deleteCharacterMenu();
                 deleted = false;
             } else if (Boolean(chatEnabled)) {
+                let charData = await characterDataCall();
                 socket.emit('new message', keysEntered.valueOf());
                 term.writeln('')
                 chatEnabled = false;
@@ -440,15 +446,16 @@ buttonClear.addEventListener('click', async _ => {
 });
 
 buttonChat.addEventListener('click', async _ => {
+    let charData = await characterDataCall()
     if (chatToggle.textContent === 'OFF') {
         buttonChat.classList.remove("is-black");
         chatToggle.textContent = 'ON'
         buttonChat.classList.add("is-dark");
-        chatSubscribed = true;
+        socket.emit('join room', charData.data.currentRoom);
     } else {
         buttonChat.classList.remove("is-dark");
         chatToggle.textContent = 'OFF'
         buttonChat.classList.add("is-black");
-        chatSubscribed = false;
+        socket.emit('leave room', charData.data.currentRoom);
     }
 });
