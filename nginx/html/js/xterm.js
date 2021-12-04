@@ -4,6 +4,7 @@ const buttonSubmit = document.getElementById('submit');
 const buttonClear = document.getElementById('clear');
 const buttonChat = document.getElementById('chat');
 const score = document.querySelector('#score');
+const usersChatroom = document.querySelector('#usersinChatroom');
 const chatToggle = document.getElementById("chatToggle");
 
 const connectionOptions = {
@@ -118,7 +119,7 @@ async function move(keysEntered) {
     })
         .then(function (response) {
             if (response.status === 200) {
-                moveSuccess(response, oldRoom);
+                moveSuccess(response, oldRoom.data.currentRoom);
             } else {
                 moveFailed(response);
             }
@@ -160,9 +161,13 @@ const addChatMessage = (data, options = {}) => {
     }
 }
 
+socket.on('info', (data) => {
+    usersChatroom.textContent = data.numUsers;
+});
+
 // Whenever the server emits 'login', log the login message
 socket.on('login', (data) => {
-    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'Welcome to mudpy Chat room' + data.room);
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'Welcome to mudpy Chat room: ' + data.room);
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ');
 });
 
@@ -358,7 +363,6 @@ function main() {
                 deleteCharacterMenu();
                 deleted = false;
             } else if (Boolean(chatEnabled)) {
-                let charData = await characterDataCall();
                 socket.emit('new message', keysEntered.valueOf());
                 term.writeln('')
                 chatEnabled = false;
@@ -457,5 +461,6 @@ buttonChat.addEventListener('click', async _ => {
         chatToggle.textContent = 'OFF'
         buttonChat.classList.add("is-black");
         socket.emit('leave room', charData.data.currentRoom);
+        usersChatroom.textContent = 'Roomchat OFF'
     }
 });

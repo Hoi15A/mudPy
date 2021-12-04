@@ -1,6 +1,5 @@
 const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true });
 const axios = require('axios').default;
-const roomUtils = require('./roomUtils')
 const puzzleUtils = require('./puzzleUtils');
 
 const fastifyIO = require('fastify-socket.io')
@@ -19,9 +18,16 @@ fastify.register(fastifyIO, {
 });
 
 fastify.ready().then(() => {
+    function getScoketsofRoom(room) {
+        return fastify.io.in(room).fetchSockets();
+    }
+    function updateInfo(room, numClients) {
+        fastify.io.to(room).emit('info', {
+            numUsers: numClients,
+        });
+    }
     fastify.io.on('connection', (socket) => {
         let addedUser = false;
-        fastify.io.emit("hello");
         socket.join("some room");
 
         // when the client emits 'new message', this listens and executes
@@ -35,53 +41,60 @@ fastify.ready().then(() => {
         });
 
         // when the client emits 'add user', this listens and executes
-        socket.on('add user', (username, room) => {
+        socket.on('add user', async (username, room) => {
             if (addedUser) return;
             socket.join(room);
             // we store the username in the socket session for this client
             socket.room = room;
             socket.username = username;
-            ++numUsers;
             addedUser = true;
             socket.emit('login', {
                 numUsers: numUsers,
                 room: room
             });
+            //Set of all client ids in the room
+            const sockets = await getScoketsofRoom(room)
+            //to get the number of clients in this room
+            const numClients = sockets ? sockets.length : 0;
+            updateInfo(room, numClients)
         });
 
         //listen to roomchange
-        socket.on('change room', (room, oldRoom) => {
+        socket.on('change room', async (room, oldRoom) => {
             socket.room = room;
             socket.leave(oldRoom)
-            socket.join(room);
+            const socketsOld = await getScoketsofRoom(oldRoom)
+            //to get the number of clients in this room
+            const numClientsOld = socketsOld ? socketsOld.length : 0;
+            updateInfo(oldRoom, numClientsOld);
+            socket.join(room)
+            //Set of all client ids in the room
+            const sockets = await getScoketsofRoom(room)
+            //to get the number of clients in this room
+            const numClients = sockets ? sockets.length : 0;
+            updateInfo(room, numClients);
         });
 
-        socket.on('join room', (room) => {
+        socket.on('join room', async (room) => {
             socket.room = room;
             socket.join(room);
+            //Set of all client ids in the room
+            const sockets = await getScoketsofRoom(room)
+            //to get the number of clients in this room
+            const numClients = sockets ? sockets.length : 0;
+            updateInfo(room, numClients);
         });
 
-        socket.on('leave room', (room) => {
+        socket.on('leave room', async (room) => {
             socket.room = '';
             socket.leave(room)
-        });
-
-        // when the user disconnects.. perform this
-        socket.on('disconnect', () => {
-            if (addedUser) {
-                --numUsers;
-
-                // echo globally that this client has left
-                socket.broadcast.emit('user left', {
-                    username: socket.username,
-                    numUsers: numUsers
-                });
-            }
+            //Set of all client ids in the room
+            const sockets = await getScoketsofRoom(room)
+            //to get the number of clients in this room
+            const numClients = sockets ? sockets.length : 0;
+            updateInfo(room, numClients);
         });
     });
-});
-
-fastify.get("/", (req, reply) => {
 });
 
 // Chatroom
