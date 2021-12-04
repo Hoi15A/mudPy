@@ -2,7 +2,9 @@ const terminal = document.getElementById('console');
 const task = document.getElementById('task');
 const buttonSubmit = document.getElementById('submit');
 const buttonClear = document.getElementById('clear');
+const buttonChat = document.getElementById('chat');
 const score = document.querySelector('#score');
+const chatToggle = document.getElementById("chatToggle");
 
 const connectionOptions = {
     "force new connection": true,
@@ -18,6 +20,7 @@ let chosen = true;
 let deleted = true;
 let created = true;
 let chatEnabled = false;
+let chatSubscribed = false;
 let characters;
 let character;
 let chatUsername;
@@ -71,6 +74,7 @@ function menu() {
     term.writeln('\x1B[0mnorth         |      move north')
     term.writeln('\x1B[0mwest          |      move west')
     term.writeln('\x1B[0meast          |      move east')
+    term.writeln('\x1B[0mchat          |      send a message to chat')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -92,17 +96,16 @@ function createCharacterMenu() {
 
 function moveSuccess(response) {
     axios.get(user + '/characters/' + character.name).then(async resp => {
-        drawMap(resp.data.roomCompletions, resp.data.currentRoom);
-        term.writeln('\x1b[0m' + response.data.message)
+        drawMap(resp.data.roomCompletions, resp.data.currentRoom, resp.data.keys);
+        term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         await replaceTask(resp);
     });
 }
 
 function moveFailed(error) {
-    term.writeln('');
     term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
-    term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -130,22 +133,25 @@ async function characterDataCall() {
 }
 
 function chatJoin(name) {
-        chatUsername = name;
-        // If the username is valid
-        if (chatUsername) {
-            // Tell the server your username
-            socket.emit('add user', chatUsername);
-        }
+    chatUsername = name;
+    // If the username is valid
+    if (chatUsername) {
+        // Tell the server your username
+        socket.emit('add user', chatUsername);
+    }
+    buttonChat.classList.remove("is-black");
+    chatToggle.textContent = 'ON'
+    buttonChat.classList.add("is-dark");
+    chatSubscribed = true;
 }
 
 const addChatMessage = (data, options = {}) => {
     term.writeln('');
     term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + '\x1B[38;5;86m' + data.username + ': \x1B[0m' +
         '\x1B[38;5;40m' + data.message + '\x1B[0m');
-    if(chatEnabled) {
+    if (chatEnabled) {
         term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
-    }
-    else {
+    } else {
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     }
 }
@@ -168,14 +174,14 @@ socket.on('disconnect', () => {
 
 socket.on('reconnect', () => {
     term.writeln('');
-    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' +  'you have been reconnected');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'you have been reconnected');
     if (chatUsername) {
         socket.emit('add user', chatUsername);
     }
 });
 
 socket.on('reconnect_error', () => {
-    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' +  'attempt to reconnect has failed');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'attempt to reconnect has failed');
 });
 
 
@@ -249,7 +255,7 @@ async function choser(keysEntered) {
         chosen = true;
         term.clear();
         let response = await characterDataCall();
-        drawMap(response.data.roomCompletions, response.data.currentRoom);
+        drawMap(response.data.roomCompletions, response.data.currentRoom, response.data.keys);
         let puzzle = await axios.get('api/puzzles/' + response.data.currentPuzzle);
         task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
@@ -346,15 +352,11 @@ function main() {
             } else if (keysEntered.valueOf() === '3' && Boolean(start)) {
                 deleteCharacterMenu();
                 deleted = false;
-            } else if (Boolean(chatEnabled) && keysEntered.valueOf() === 'leave') {
-                chatEnabled = false;
-                term.writeln('')
-                term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + 'left chat')
-                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             } else if (Boolean(chatEnabled)) {
                 socket.emit('new message', keysEntered.valueOf());
-                term.writeln('\r')
-                term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
+                term.writeln('')
+                chatEnabled = false;
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             } else {
                 term.writeln('')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -372,7 +374,7 @@ function correctSolution() {
 
 function displayCurrentTask(puzzle) {
     term.writeln('\x1b[0mCurrent Task:\x1B[0m')
-    term.writeln('\x1b[0m' + puzzle.data.problem + '\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0m' + puzzle.data.problem + '\x1B[0m')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -388,7 +390,8 @@ async function roomCompleted(charData) {
     let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
     task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
-    drawMap(charData.data.roomCompletions, charData.data.currentRoom);
+    let roomCompletedCall = await characterDataCall()
+    drawMap(roomCompletedCall.data.roomCompletions, roomCompletedCall.data.currentRoom, roomCompletedCall.data.keys);
 }
 
 async function puzzleCompleted(charData) {
@@ -403,8 +406,7 @@ async function roomCompletedCheck() {
     score.textContent = charData.data.points;
     if ((charData.data.roomCompletions).includes(charData.data.currentRoom)) {
         await roomCompleted(charData);
-    }
-    else {
+    } else {
         await puzzleCompleted(charData);
     }
     return charData;
@@ -435,4 +437,18 @@ buttonSubmit.addEventListener('click', async _ => {
 
 buttonClear.addEventListener('click', async _ => {
     editor.setValue('')
+});
+
+buttonChat.addEventListener('click', async _ => {
+    if (chatToggle.textContent === 'OFF') {
+        buttonChat.classList.remove("is-black");
+        chatToggle.textContent = 'ON'
+        buttonChat.classList.add("is-dark");
+        chatSubscribed = true;
+    } else {
+        buttonChat.classList.remove("is-dark");
+        chatToggle.textContent = 'OFF'
+        buttonChat.classList.add("is-black");
+        chatSubscribed = false;
+    }
 });

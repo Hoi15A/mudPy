@@ -1,4 +1,5 @@
-function drawMap(rc, cr) {
+function drawMap(rc, cr, keysCollected) {
+    let checker = (arr, target) => target.every(v => arr.includes(v));
     let mapSelector = document.getElementById("map")
     let map = [""];
     map.push('P = Player, X = completed Rooms')
@@ -61,7 +62,7 @@ function drawMap(rc, cr) {
             } else if (rc !== undefined) {
                 if (rc.includes(element.id)) {
                     map.push("[" + "X" + "]");
-                } else if (element.keys_required.length > 0) {
+                } else if (element.keys_required.length > 0 && !(checker(keysCollected, element.keys_required))) {
                     map.push("[<span style=\"color:red\">" + element.keys_required[0].charAt(1) + "</span>]");
                 } else {
                     map.push("[" + " " + "]");
