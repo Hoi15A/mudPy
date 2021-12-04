@@ -3,13 +3,24 @@ const task = document.getElementById('task');
 const buttonSubmit = document.getElementById('submit');
 const buttonClear = document.getElementById('clear');
 const score = document.querySelector('#score');
+
+const connectionOptions = {
+    "force new connection": true,
+    "reconnectionAttempts": "Infinity",
+    "timeout": 10000,
+    "upgrade": true
+};
+const socket = io(connectionOptions);
+
 let myBuffer = [];
 let start = false;
 let chosen = true;
 let deleted = true;
 let created = true;
+let chatEnabled = false;
 let characters;
 let character;
+let chatUsername;
 
 //TODO hardcoded user update this on login
 const userEmail = 'example@students.zhaw.ch';
@@ -67,7 +78,7 @@ function chooseCharacterMenu() {
     start = false;
     chosen = false;
     term.clear();
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, choose your Character\x1B[0m')
     listCharacters();
 }
@@ -75,7 +86,7 @@ function chooseCharacterMenu() {
 function createCharacterMenu() {
     start = false;
     term.clear();
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mType in your characters name: \x1B[0m')
 }
 
@@ -89,7 +100,7 @@ function moveSuccess(response) {
 }
 
 function moveFailed(error) {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mFailed to move Character\x1B[0m')
     term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -118,6 +129,56 @@ async function characterDataCall() {
     return axios.get(user + '/characters/' + character.name);
 }
 
+function chatJoin(name) {
+        chatUsername = name;
+        // If the username is valid
+        if (chatUsername) {
+            // Tell the server your username
+            socket.emit('add user', chatUsername);
+        }
+}
+
+const addChatMessage = (data, options = {}) => {
+    term.writeln('');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + '\x1B[38;5;86m' + data.username + ': \x1B[0m' +
+        '\x1B[38;5;40m' + data.message + '\x1B[0m');
+    if(chatEnabled) {
+        term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
+    }
+    else {
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    }
+}
+
+// Whenever the server emits 'login', log the login message
+socket.on('login', (data) => {
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'Welcome to mudpy Chat');
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ');
+});
+
+// Whenever the server emits 'new message', update the chat body
+socket.on('new message', (data) => {
+    addChatMessage(data);
+});
+
+socket.on('disconnect', () => {
+    term.writeln('');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' + 'you have been disconnected');
+});
+
+socket.on('reconnect', () => {
+    term.writeln('');
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' +  'you have been reconnected');
+    if (chatUsername) {
+        socket.emit('add user', chatUsername);
+    }
+});
+
+socket.on('reconnect_error', () => {
+    term.writeln('\x1B[38;5;226mmudpy chat\x1B[0m $ ' +  'attempt to reconnect has failed');
+});
+
+
 async function coreMain(keysEntered) {
     if (keysEntered.valueOf() === "help") {
         menu();
@@ -135,6 +196,9 @@ async function coreMain(keysEntered) {
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else if (keysEntered.valueOf() === "startmenu") {
         startMenu();
+    } else if (keysEntered.valueOf() === "chat") {
+        term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
+        chatEnabled = true;
     } else if (keysEntered.valueOf() === "north") {
         move(keysEntered);
     } else if (keysEntered.valueOf() === "south") {
@@ -150,7 +214,7 @@ async function coreMain(keysEntered) {
 }
 
 function createSuccess() {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
     created = true;
     chooseCharacterMenu();
@@ -165,14 +229,14 @@ function creator(keysEntered) {
             if (response.status === 210) {
                 createSuccess();
             } else {
-                term.write('\r');
+                term.writeln('');
                 term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
                 term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
                 createCharacterMenu();
             }
         })
         .catch(function (error) {
-            term.write('\r');
+            term.writeln('');
             term.writeln('\x1b[38;5;33mFailed to create new Character\x1B[0m')
             term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
             createCharacterMenu();
@@ -190,14 +254,16 @@ async function choser(keysEntered) {
         task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
         score.textContent = response.data.points;
-        displayCurrentTask(puzzle);
+        term.writeln('\x1b[0mCurrent Task:\x1B[0m')
+        term.writeln('\x1b[0m' + puzzle.data.problem + '\x1B[0m')
+        chatJoin(response.data.name);
     } else {
         chooseCharacterMenu();
     }
 }
 
 function deleteSuccess() {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mCharacter deleted\x1B[0m')
     deleted = true;
     startMenu();
@@ -218,7 +284,7 @@ function listCharacters() {
 function deleteCharacterMenu() {
     start = false;
     term.clear();
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, delete a Character\x1B[0m')
     listCharacters();
 }
@@ -232,20 +298,20 @@ async function deleter(keysEntered) {
                 if (response.status === 210) {
                     deleteSuccess();
                 } else {
-                    term.write('\r');
+                    term.writeln('');
                     term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
                     term.writeln('\x1b[38;5;33m' + response.status + '\x1B[0m')
                     deleteCharacterMenu();
                 }
             })
             .catch(function (error) {
-                term.write('\r');
+                term.writeln('');
                 term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
                 term.writeln('\x1b[38;5;33m' + error.response.data.message + '\x1B[0m')
                 deleteCharacterMenu();
             })
     } else {
-        term.write('\r');
+        term.writeln('');
         term.writeln('\x1b[38;5;33mFailed to delete Character\x1B[0m')
         startMenu()
     }
@@ -255,7 +321,7 @@ function main() {
     term.onData(async function (key) {
         if (key === '\u007F') {
             term.write('\b \b');
-            myBuffer.pop(key);
+            myBuffer.pop();
         } else {
             myBuffer.push(key);
             term.write(key);
@@ -264,7 +330,7 @@ function main() {
             let keysEntered = myBuffer.join('');
             myBuffer = [];
             keysEntered = keysEntered.replace('\r', '')
-            if (Boolean(created) && Boolean(chosen) && Boolean(deleted) && !Boolean(start)) {
+            if (Boolean(created) && Boolean(chosen) && Boolean(deleted) && !Boolean(start) && !Boolean(chatEnabled)) {
                 await coreMain(keysEntered);
             } else if (!Boolean(created)) {
                 creator(keysEntered);
@@ -280,8 +346,17 @@ function main() {
             } else if (keysEntered.valueOf() === '3' && Boolean(start)) {
                 deleteCharacterMenu();
                 deleted = false;
-            } else {
+            } else if (Boolean(chatEnabled) && keysEntered.valueOf() === 'leave') {
+                chatEnabled = false;
+                term.writeln('')
+                term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + 'left chat')
+                term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+            } else if (Boolean(chatEnabled)) {
+                socket.emit('new message', keysEntered.valueOf());
                 term.writeln('\r')
+                term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
+            } else {
+                term.writeln('')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             }
         }
@@ -289,7 +364,7 @@ function main() {
 }
 
 function correctSolution() {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[0mYour solution was correct\x1B[0m')
     //score
     term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
@@ -308,7 +383,7 @@ async function replaceTask(charData) {
 }
 
 async function roomCompleted(charData) {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[0mYou completed the room\x1B[0m')
     let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
     task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0]);
@@ -317,7 +392,7 @@ async function roomCompleted(charData) {
 }
 
 async function puzzleCompleted(charData) {
-    term.write('\r');
+    term.writeln('');
     term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
     term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
     await replaceTask(charData);
@@ -348,7 +423,7 @@ buttonSubmit.addEventListener('click', async _ => {
                 correctSolution();
                 await roomCompletedCheck();
             } else {
-                term.write('\r');
+                term.writeln('');
                 term.writeln('\x1b[0mYour solution was not correct\x1B[0m')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             }

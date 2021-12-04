@@ -11,6 +11,12 @@ services:
       - SNEKBOX_API=http://snekbox:8060
       - FASTIFY_LOGGER=false
     restart: always
+    ports:
+      - "9229:9229"
+    command:
+      - node
+      - "--inspect-brk=0.0.0.0"
+      - "."
     depends_on:
       - mongodb
       - snekbox

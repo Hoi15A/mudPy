@@ -2,6 +2,72 @@ const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'tru
 const axios = require('axios').default;
 const roomUtils = require('./roomUtils')
 const puzzleUtils = require('./puzzleUtils');
+
+const fastifyIO = require('fastify-socket.io')
+
+fastify.register(require('fastify-cors'), {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+});
+
+fastify.register(fastifyIO, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
+    },
+});
+
+fastify.ready().then(() => {
+    fastify.io.on('connection', (socket) => {
+        let addedUser = false;
+        fastify.io.emit("hello");
+
+        // when the client emits 'new message', this listens and executes
+        socket.on('new message', (data) => {
+            // we tell the client to execute 'new message'
+            socket.broadcast.emit('new message', {
+                username: socket.username,
+                message: data
+            });
+        });
+
+        // when the client emits 'add user', this listens and executes
+        socket.on('add user', (username) => {
+            if (addedUser) return;
+
+            // we store the username in the socket session for this client
+            socket.username = username;
+            ++numUsers;
+            addedUser = true;
+            socket.emit('login', {
+                numUsers: numUsers
+            });
+        });
+
+        // when the user disconnects.. perform this
+        socket.on('disconnect', () => {
+            if (addedUser) {
+                --numUsers;
+
+                // echo globally that this client has left
+                socket.broadcast.emit('user left', {
+                    username: socket.username,
+                    numUsers: numUsers
+                });
+            }
+        });
+    });
+});
+
+fastify.get("/", (req, reply) => {
+});
+
+// Chatroom
+
+let numUsers = 0;
+
+
 const roomsRoute = require('./routes/rooms')
 const usersRoute = require('./routes/users')
 const puzzlesRoute = require('./routes/puzzles');
@@ -10,9 +76,6 @@ roomsRoute.use(fastify)
 usersRoute.use(fastify)
 puzzlesRoute.use(fastify)
 
-fastify.get('/', async () => {
-    return { hello: 'world' }
-})
 
 // character creation
 
