@@ -85,6 +85,7 @@ function menu() {
     term.writeln('\x1B[0mwest          |      move west')
     term.writeln('\x1B[0meast          |      move east')
     term.writeln('\x1B[0mchat          |      send a message to chat')
+    term.writeln('\x1B[0mprogress      |      puzzle progress of room')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -237,6 +238,10 @@ async function coreMain(keysEntered) {
         await move(keysEntered);
     } else if (keysEntered.valueOf() === "east") {
         await move(keysEntered);
+    } else if (keysEntered.valueOf() === "progress") {
+        let roomprogress = await axios.get(user + '/characters/' + character.name + '/roomprogress')
+        term.writeln('\x1b[0m' + roomprogress.data.message + '\x1B[0m')
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else {
         term.writeln('\r')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -408,8 +413,6 @@ function main() {
 function correctSolution() {
     term.writeln('');
     term.writeln('\x1b[0mYour solution was correct\x1B[0m')
-    //score
-    term.write('\x1B[1;3;31mmmudpy\x1B[0m $ ')
 }
 
 function displayCurrentTask(puzzle) {
@@ -438,6 +441,8 @@ async function puzzleCompleted(charData) {
     term.writeln('');
     term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
     term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
+    let roomprogress = await axios.get(user + '/characters/' + character.name + '/roomprogress')
+    term.writeln('\x1b[0m' + roomprogress.data.message + '\x1B[0m')
     await replaceTask(charData);
 }
 

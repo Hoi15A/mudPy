@@ -174,4 +174,25 @@ module.exports.use = function (fastify) {
 
     })
 
+    fastify.get('/users/:email/characters/:name/roomprogress', async (request, reply) => {
+        try {
+            const character = await database.getCharacterForUser(request.params.email, request.params.name)
+            const room = getRoom(character.currentRoom)
+            const puzzles = getPuzzlesofRoom(room.id)
+            if (check(character.puzzleCompletions, puzzles)) {
+                reply.code(200).send({message: "Completed Puzzles in Room: " + puzzles.length + "/" + puzzles.length})
+            }
+            else if(!check(character.puzzleCompletions, puzzles)) {
+                let dif = await nextPuzzle(puzzles, character.puzzleCompletions);
+                reply.code(200).send({message: "Completed Puzzles in Room: " + (puzzles.length-dif.length) + "/" + puzzles.length})
+            }
+            else {
+                reply.code(400).send()
+            }
+
+        } catch (e) {
+            reply.code(400).send({ message: e.message, info: e.errInfo })
+        }
+    })
+
 }
