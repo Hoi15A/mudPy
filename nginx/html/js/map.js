@@ -98,23 +98,21 @@ function drawMap(rc, cr, keysCollected) {
         let offsetS = 0;
         let offsetN = 0;
         let offset = 0;
-        function getDirWest(room, dir, oS) {
-            if(rooms.find(element => element.id === dir).adjacent_rooms.west) {
-                oS++
-                getDirwest(room, dir, oS)
-            }
-            else {
-                return oS
+        function getDirWest(dir) {
+            let findRoom = rooms.find(element => element.id === dir).adjacent_rooms.west
+            if(findRoom) {
+                offsetS++
+                getDirWest(findRoom)
             }
         }
         for (let room in rooms) {
             let south = rooms[room].adjacent_rooms.south;
             if (south) {
-                offsetS = getDirWest(room, south, offsetS)
+                getDirWest(south)
             }
             let north = rooms[room].adjacent_rooms.north;
             if (north) {
-                offsetN = getDirWest(room, north, offsetS)
+                getDirWest(north)
             }
             if (floor.length === 0) {
                 floor.push(rooms[room])
