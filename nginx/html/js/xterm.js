@@ -47,19 +47,29 @@ term.loadAddon(fitAddon);
 term.open(terminal);
 fitAddon.fit();
 
+term.writeln('Welcome to \x1B[1;3;31mmudpy 1.0\x1B[0m')
 startMenu();
 main();
 
-function startMenu() {
+async function startMenu() {
     start = true;
     task.textContent = '';
     score.textContent = '0';
-    term.writeln('Welcome to \x1B[1;3;31mmudpy 1.0\x1B[0m')
     term.writeln('What would you like to do?')
     term.writeln('Press 1: Choose character')
     term.writeln('Press 2: Create new character')
     term.writeln('Press 3: Delete a character')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    if (character !== undefined) {
+        let charData = await characterDataCall()
+        socket.emit('leave room', charData.data.currentRoom);
+        usersChatroom.textContent = 'Roomchat OFF'
+        if (chatToggle.textContent === 'ON') {
+            buttonChat.classList.remove("is-dark");
+            chatToggle.textContent = 'OFF'
+            buttonChat.classList.add("is-black");
+        }
+    }
 }
 
 function menu() {
@@ -82,7 +92,6 @@ function chooseCharacterMenu() {
     start = false;
     chosen = false;
     term.clear();
-    term.writeln('');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, choose your Character\x1B[0m')
     listCharacters();
 }
@@ -98,9 +107,13 @@ function moveSuccess(response, oldRoom) {
     axios.get(user + '/characters/' + character.name).then(async resp => {
         drawMap(resp.data.roomCompletions, resp.data.currentRoom, resp.data.keys);
         term.writeln('\x1b[38;5;33m' + response.data.message + '\x1B[0m')
-        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
         await replaceTask(resp);
-        socket.emit('change room', resp.data.currentRoom, oldRoom);
+        if (chatToggle.textContent === 'OFF') {
+            socket.emit('leave room', oldRoom);
+        }
+        else if (chatToggle.textContent === 'ON') {
+            socket.emit('change room', resp.data.currentRoom, oldRoom);
+        }
     });
 }
 
@@ -162,7 +175,9 @@ const addChatMessage = (data, options = {}) => {
 }
 
 socket.on('info', (data) => {
-    usersChatroom.textContent = data.numUsers;
+    if(chatToggle.textContent === 'ON') {
+        usersChatroom.textContent = data.numUsers;
+    }
 });
 
 // Whenever the server emits 'login', log the login message
@@ -202,7 +217,6 @@ async function coreMain(keysEntered) {
         buttonSubmit.click();
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else if (keysEntered.valueOf() === "task") {
-        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ Your current task: ')
         let charData = await characterDataCall();
         let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle);
         displayCurrentTask(puzzle);
@@ -230,7 +244,7 @@ async function coreMain(keysEntered) {
 }
 
 function createSuccess() {
-    term.writeln('');
+    term.clear();
     term.writeln('\x1b[38;5;33mNew character created\x1B[0m')
     created = true;
     chooseCharacterMenu();
@@ -270,9 +284,9 @@ async function choser(keysEntered) {
         task.appendChild(document.createTextNode(puzzle.data.problem));
         term.writeln('\x1b[38;5;33mYour story continues here: ' + character.name + '\x1B[0m')
         score.textContent = response.data.points;
-        term.writeln('\x1b[0mCurrent Task:\x1B[0m')
-        term.writeln('\x1b[0m' + puzzle.data.problem + '\x1B[0m')
-        chatJoin(response.data.name);
+        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0mCurrent Task:\x1B[0m')
+        term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0m' + puzzle.data.problem + '\x1B[0m')
+        await chatJoin(response.data.name);
     } else {
         chooseCharacterMenu();
     }
@@ -299,8 +313,6 @@ function listCharacters() {
 
 function deleteCharacterMenu() {
     start = false;
-    term.clear();
-    term.writeln('');
     term.writeln('\x1b[38;5;33mWelcome back python adventurer, delete a Character\x1B[0m')
     listCharacters();
 }
@@ -355,13 +367,31 @@ function main() {
             } else if (!Boolean(deleted)) {
                 await deleter(keysEntered);
             } else if (keysEntered.valueOf() === '1' && Boolean(start)) {
-                chooseCharacterMenu();
+                await axios.get(user).then(resp => {
+                    characters = resp.data.characters;
+                })
+                if(Array.isArray(characters) && characters.length) {
+                    chooseCharacterMenu();
+                }
+                else {
+                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + 'no characters found')
+                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                }
             } else if (keysEntered.valueOf() === '2' && Boolean(start)) {
                 createCharacterMenu();
                 created = false;
             } else if (keysEntered.valueOf() === '3' && Boolean(start)) {
-                deleteCharacterMenu();
-                deleted = false;
+                await axios.get(user).then(resp => {
+                    characters = resp.data.characters;
+                })
+                if(Array.isArray(characters) && characters.length) {
+                    deleteCharacterMenu();
+                    deleted = false;
+                }
+                else {
+                    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + 'no characters found')
+                    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+                }
             } else if (Boolean(chatEnabled)) {
                 socket.emit('new message', keysEntered.valueOf());
                 term.writeln('')
@@ -383,7 +413,7 @@ function correctSolution() {
 }
 
 function displayCurrentTask(puzzle) {
-    term.writeln('\x1b[0mCurrent Task:\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0mCurrent Task:\x1B[0m')
     term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0m' + puzzle.data.problem + '\x1B[0m')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }

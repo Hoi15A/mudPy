@@ -27,8 +27,6 @@ fastify.ready().then(() => {
         });
     }
     fastify.io.on('connection', (socket) => {
-        let addedUser = false;
-        socket.join("some room");
 
         // when the client emits 'new message', this listens and executes
         socket.on('new message', (data) => {
@@ -42,14 +40,11 @@ fastify.ready().then(() => {
 
         // when the client emits 'add user', this listens and executes
         socket.on('add user', async (username, room) => {
-            if (addedUser) return;
             socket.join(room);
             // we store the username in the socket session for this client
             socket.room = room;
             socket.username = username;
-            addedUser = true;
             socket.emit('login', {
-                numUsers: numUsers,
                 room: room
             });
             //Set of all client ids in the room
