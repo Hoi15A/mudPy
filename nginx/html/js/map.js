@@ -98,36 +98,23 @@ function drawMap(rc, cr, keysCollected) {
         let offsetS = 0;
         let offsetN = 0;
         let offset = 0;
+        function getDirWest(room, dir, oS) {
+            if(rooms.find(element => element.id === dir).adjacent_rooms.west) {
+                oS++
+                getDirwest(room, dir, oS)
+            }
+            else {
+                return oS
+            }
+        }
         for (let room in rooms) {
             let south = rooms[room].adjacent_rooms.south;
             if (south) {
-                let southwest = rooms.find(element => element.id === south).adjacent_rooms.west;
-                if (southwest) {
-                    offsetS = 1;
-                    let southwester = rooms.find(element => element.id === southwest).adjacent_rooms.west;
-                    if (southwester) {
-                        offsetS = 2;
-                        let southwesterer = rooms.find(element => element.id === southwester).adjacent_rooms.west;
-                        if (southwesterer) {
-                            offsetS = 3;
-                        }
-                    }
-                }
+                offsetS = getDirWest(room, south, offsetS)
             }
             let north = rooms[room].adjacent_rooms.north;
             if (north) {
-                let northwest = rooms.find(element => element.id === north).adjacent_rooms.west;
-                if (northwest) {
-                    offsetN = 1;
-                    let northwester = rooms.find(element => element.id === northwest).adjacent_rooms.west;
-                    if (northwester) {
-                        offsetN = 2;
-                        let northwesterer = rooms.find(element => element.id === northwester).adjacent_rooms.west;
-                        if (northwesterer) {
-                            offsetN = 3;
-                        }
-                    }
-                }
+                offsetN = getDirWest(room, north, offsetS)
             }
             if (floor.length === 0) {
                 floor.push(rooms[room])

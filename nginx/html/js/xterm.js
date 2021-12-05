@@ -216,13 +216,13 @@ async function coreMain(keysEntered) {
         term.write('\x1B[38;5;84mmudpy chat\x1B[0m $ ')
         chatEnabled = true;
     } else if (keysEntered.valueOf() === "north") {
-        move(keysEntered);
+        await move(keysEntered);
     } else if (keysEntered.valueOf() === "south") {
-        move(keysEntered);
+        await move(keysEntered);
     } else if (keysEntered.valueOf() === "west") {
-        move(keysEntered);
+        await move(keysEntered);
     } else if (keysEntered.valueOf() === "east") {
-        move(keysEntered);
+        await move(keysEntered);
     } else {
         term.writeln('\r')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
