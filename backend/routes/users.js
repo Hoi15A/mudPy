@@ -1,7 +1,7 @@
 const database = require("../database");
 const {getNearbyRoom, getRoom, getPuzzlesofRoom} = require("../roomUtils");
 const {getPuzzle} = require("../puzzleUtils");
-const {getKeysForCharacter} = require("../database");
+const {getLeaderboard} = require("../database");
 
 async function nextPuzzle(roomP, compP) {
     return roomP.filter(
@@ -190,6 +190,15 @@ module.exports.use = function (fastify) {
                 reply.code(400).send()
             }
 
+        } catch (e) {
+            reply.code(400).send({ message: e.message, info: e.errInfo })
+        }
+    })
+
+    fastify.get('/leaderboard', async (request, reply) => {
+        try {
+            let leaderboard = await getLeaderboard();
+            reply.code(200).send(leaderboard)
         } catch (e) {
             reply.code(400).send({ message: e.message, info: e.errInfo })
         }

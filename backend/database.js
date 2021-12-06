@@ -173,6 +173,44 @@ module.exports = {
         await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentPuzzle": puzzle } })
         await client.close()
         return true
+    },
+    getLeaderboard: async () => {
+        await client.connect()
+        const users = db.collection('users')
+        const agg = [
+            {
+                '$unwind': '$characters'
+            }, {
+                '$sort': {
+                    'characters.points': -1
+                }
+            }, {
+                '$group': {
+                    '_id': {
+                        'name': '$email'
+                    },
+                    'characters': {
+                        '$push': '$characters'
+                    }
+                }
+            }, {
+                '$sort': {
+                    'characters.points': -1
+                }
+            }, {
+                '$project': {
+                    'resp': {
+                        '$first': '$characters'
+                    }
+                }
+            }, {
+                '$limit': 10
+            }
+        ];
+        let aggregation = await users.aggregate(agg);
+        aggregation = await aggregation.toArray()
+        await client.close()
+        return aggregation
     }
 }
 

@@ -211,6 +211,33 @@ socket.on('reconnect_error', () => {
 });
 
 
+async function leaderboardPrint() {
+    let leaderboard = await axios.get('/api/leaderboard')
+    term.writeln('')
+    term.writeln('\x1b[38;5;214mTop 10 characters (best character of a User shown)\x1B[0m')
+    term.writeln('\x1b[38;5;214m#  points charactername  user\x1B[0m')
+    for (let i = 0; i < leaderboard.data.length; i++) {
+        let rank = i+1
+        let pointsOffset = 7 - leaderboard.data[i].resp.points.toString().length
+        let pointOffsetVisual = ''
+        for (let j = 0; j < pointsOffset; j++) {
+            pointOffsetVisual = pointOffsetVisual + ' '
+        }
+        let nameOffset = 15 - leaderboard.data[i].resp.name.length
+        let nameOffsetVisual = ''
+        for (let j = 0; j < nameOffset; j++) {
+            nameOffsetVisual = nameOffsetVisual + ' '
+        }
+        term.writeln('\x1b[38;5;215m' + rank + ': ' + leaderboard.data[i].resp.points
+            + pointOffsetVisual
+            + leaderboard.data[i].resp.name
+            + nameOffsetVisual
+            + leaderboard.data[i]._id.name
+            + '\x1B[0m')
+    }
+    term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+}
+
 async function coreMain(keysEntered) {
     if (keysEntered.valueOf() === "help") {
         menu();
@@ -238,6 +265,8 @@ async function coreMain(keysEntered) {
         await move(keysEntered);
     } else if (keysEntered.valueOf() === "east") {
         await move(keysEntered);
+    } else if (keysEntered.valueOf() === "leaderboard") {
+        await leaderboardPrint();
     } else if (keysEntered.valueOf() === "progress") {
         let roomprogress = await axios.get(user + '/characters/' + character.name + '/roomprogress')
         term.writeln('\x1b[0m' + roomprogress.data.message + '\x1B[0m')
