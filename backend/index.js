@@ -18,7 +18,7 @@ fastify.register(fastifyIO, {
 });
 
 fastify.ready().then(() => {
-    function getScoketsofRoom(room) {
+    function getSocketsOfRoom(room) {
         return fastify.io.in(room).fetchSockets();
     }
     function updateInfo(room, numClients) {
@@ -48,7 +48,7 @@ fastify.ready().then(() => {
                 room: room
             });
             //Set of all client ids in the room
-            const sockets = await getScoketsofRoom(room)
+            const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
             const numClients = sockets ? sockets.length : 0;
             updateInfo(room, numClients)
@@ -58,13 +58,13 @@ fastify.ready().then(() => {
         socket.on('change room', async (room, oldRoom) => {
             socket.room = room;
             socket.leave(oldRoom)
-            const socketsOld = await getScoketsofRoom(oldRoom)
+            const socketsOld = await getSocketsOfRoom(oldRoom)
             //to get the number of clients in this room
             const numClientsOld = socketsOld ? socketsOld.length : 0;
             updateInfo(oldRoom, numClientsOld);
             socket.join(room)
             //Set of all client ids in the room
-            const sockets = await getScoketsofRoom(room)
+            const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
             const numClients = sockets ? sockets.length : 0;
             updateInfo(room, numClients);
@@ -74,7 +74,7 @@ fastify.ready().then(() => {
             socket.room = room;
             socket.join(room);
             //Set of all client ids in the room
-            const sockets = await getScoketsofRoom(room)
+            const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
             const numClients = sockets ? sockets.length : 0;
             updateInfo(room, numClients);
@@ -84,17 +84,13 @@ fastify.ready().then(() => {
             socket.room = '';
             socket.leave(room)
             //Set of all client ids in the room
-            const sockets = await getScoketsofRoom(room)
+            const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
             const numClients = sockets ? sockets.length : 0;
             updateInfo(room, numClients);
         });
     });
 });
-
-// Chatroom
-
-let numUsers = 0;
 
 
 const roomsRoute = require('./routes/rooms')
@@ -106,13 +102,7 @@ usersRoute.use(fastify)
 puzzlesRoute.use(fastify)
 
 
-// character creation
-
-// update character location POST /users/:email/characers/:charname/move {direction: "west"}
-// return new character & if move success if not which rooms still required
-
-
-// Check solution
+// TODO: move into a route
 fastify.post('/submit/:puzzleID', async (request, reply) => {
     const puzzle = puzzleUtils.getPuzzle(request.params.puzzleID)
     const code = request.body.code
@@ -141,8 +131,6 @@ fastify.post('/submit/:puzzleID', async (request, reply) => {
         success: (resp.data.stdout.trim() === puzzle.expectedOutput && resp.data.returncode === 0)
     }
 })
-
-// Get puzzle for room
 
 
 const start = async () => {
