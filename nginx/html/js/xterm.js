@@ -437,7 +437,6 @@ function main() {
 }
 
 function correctSolution() {
-    term.writeln('')
     term.writeln('\x1b[0mYour solution was correct\x1B[0m')
 }
 
@@ -454,8 +453,7 @@ async function replaceTask(charData) {
 }
 
 async function roomCompleted(charData) {
-    term.writeln('')
-    term.writeln('\x1b[0mYou completed the room\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0mYou completed the room\x1B[0m')
     let puzzle = await axios.get('api/puzzles/' + charData.data.currentPuzzle)
     task.replaceChild(document.createTextNode(puzzle.data.problem), task.childNodes[0])
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
@@ -464,11 +462,10 @@ async function roomCompleted(charData) {
 }
 
 async function puzzleCompleted(charData) {
-    term.writeln('')
-    term.writeln('\x1b[0mYou completed the puzzle\x1B[0m')
-    term.writeln('\x1b[0mComplete the next puzzle of this room\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0mYou completed the puzzle\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0mComplete the next puzzle of this room\x1B[0m')
     let roomprogress = await axios.get(user + '/characters/' + character.name + '/roomprogress')
-    term.writeln('\x1b[0m' + roomprogress.data.message + '\x1B[0m')
+    term.writeln('\x1B[1;3;31mmudpy\x1B[0m $ ' + '\x1b[0m' + roomprogress.data.message + '\x1B[0m')
     await replaceTask(charData)
 }
 
@@ -496,7 +493,6 @@ buttonSubmit.addEventListener('click', async _ => {
                 correctSolution()
                 await roomCompletedCheck()
             } else {
-                term.writeln('')
                 term.writeln('\x1b[0mYour solution was not correct\x1B[0m')
                 term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
             }
