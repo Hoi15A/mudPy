@@ -6,6 +6,6 @@ module.exports.use = function(fastify) {
     })
 
     fastify.get('/puzzles/:puzzleID', async (request, reply) => {
-        return puzzles.getPuzzle(request.params.puzzleID)
+        return puzzles.getPuzzleNoSolution(request.params.puzzleID)
     })
 }

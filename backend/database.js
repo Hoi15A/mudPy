@@ -1,6 +1,6 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient } = require("mongodb")
 
-const client = new MongoClient(process.env.MONGODB_CONNSTRING);
+const client = new MongoClient(process.env.MONGODB_CONNSTRING)
 const DATABASE = "pymud"
 const db = client.db(DATABASE)
 
@@ -206,8 +206,8 @@ module.exports = {
             }, {
                 '$limit': 10
             }
-        ];
-        let aggregation = await users.aggregate(agg);
+        ]
+        let aggregation = await users.aggregate(agg)
         aggregation = await aggregation.toArray()
         await client.close()
         return aggregation

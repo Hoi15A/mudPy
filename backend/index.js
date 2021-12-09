@@ -1,13 +1,13 @@
-const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true });
-const axios = require('axios').default;
-const puzzleUtils = require('./puzzleUtils');
+const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true })
+const axios = require('axios').default
+const puzzleUtils = require('./puzzleUtils')
 
 const fastifyIO = require('fastify-socket.io')
 
 fastify.register(require('fastify-cors'), {
     origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-});
+})
 
 fastify.register(fastifyIO, {
     cors: {
@@ -15,16 +15,16 @@ fastify.register(fastifyIO, {
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept']
     },
-});
+})
 
 fastify.ready().then(() => {
     function getSocketsOfRoom(room) {
-        return fastify.io.in(room).fetchSockets();
+        return fastify.io.in(room).fetchSockets()
     }
     function updateInfo(room, numClients) {
         fastify.io.to(room).emit('info', {
             numUsers: numClients,
-        });
+        })
     }
     fastify.io.on('connection', (socket) => {
 
@@ -35,74 +35,71 @@ fastify.ready().then(() => {
                 username: socket.username,
                 message: data,
                 room: socket.room
-            });
-        });
+            })
+        })
 
         // when the client emits 'add user', this listens and executes
         socket.on('add user', async (username, room) => {
-            socket.join(room);
+            socket.join(room)
             // we store the username in the socket session for this client
-            socket.room = room;
-            socket.username = username;
+            socket.room = room
+            socket.username = username
             socket.emit('login', {
                 room: room
-            });
+            })
             //Set of all client ids in the room
             const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
-            const numClients = sockets ? sockets.length : 0;
+            const numClients = sockets ? sockets.length : 0
             updateInfo(room, numClients)
-        });
+        })
 
         //listen to roomchange
         socket.on('change room', async (room, oldRoom) => {
-            socket.room = room;
+            socket.room = room
             socket.leave(oldRoom)
             const socketsOld = await getSocketsOfRoom(oldRoom)
             //to get the number of clients in this room
-            const numClientsOld = socketsOld ? socketsOld.length : 0;
-            updateInfo(oldRoom, numClientsOld);
+            const numClientsOld = socketsOld ? socketsOld.length : 0
+            updateInfo(oldRoom, numClientsOld)
             socket.join(room)
             //Set of all client ids in the room
             const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
-            const numClients = sockets ? sockets.length : 0;
-            updateInfo(room, numClients);
-        });
+            const numClients = sockets ? sockets.length : 0
+            updateInfo(room, numClients)
+        })
 
         socket.on('join room', async (room) => {
-            socket.room = room;
-            socket.join(room);
+            socket.room = room
+            socket.join(room)
             //Set of all client ids in the room
             const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
-            const numClients = sockets ? sockets.length : 0;
-            updateInfo(room, numClients);
-        });
+            const numClients = sockets ? sockets.length : 0
+            updateInfo(room, numClients)
+        })
 
         socket.on('leave room', async (room) => {
-            socket.room = '';
+            socket.room = ''
             socket.leave(room)
             //Set of all client ids in the room
             const sockets = await getSocketsOfRoom(room)
             //to get the number of clients in this room
-            const numClients = sockets ? sockets.length : 0;
-            updateInfo(room, numClients);
-        });
-    });
-});
-
+            const numClients = sockets ? sockets.length : 0
+            updateInfo(room, numClients)
+        })
+    })
+})
 
 const roomsRoute = require('./routes/rooms')
 const usersRoute = require('./routes/users')
-const puzzlesRoute = require('./routes/puzzles');
+const puzzlesRoute = require('./routes/puzzles')
 
 roomsRoute.use(fastify)
 usersRoute.use(fastify)
 puzzlesRoute.use(fastify)
 
-
-// TODO: move into a route
 fastify.post('/submit/:puzzleID', async (request, reply) => {
     const puzzle = puzzleUtils.getPuzzle(request.params.puzzleID)
     const code = request.body.code

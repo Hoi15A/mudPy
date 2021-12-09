@@ -1,18 +1,18 @@
-const database = require("../database");
-const {getNearbyRoom, getRoom, getPuzzlesofRoom} = require("../roomUtils");
-const {getPuzzle} = require("../puzzleUtils");
-const {getLeaderboard} = require("../database");
+const database = require("../database")
+const {getNearbyRoom, getRoom, getPuzzlesofRoom} = require("../roomUtils")
+const {getPuzzle} = require("../puzzleUtils")
+const {getLeaderboard} = require("../database")
 
 async function nextPuzzle(roomP, compP) {
     return roomP.filter(
         function (e) {
-            return this.indexOf(e) < 0;
+            return this.indexOf(e) < 0
         },
         compP
     )
 }
 
-let check = (arr, target) => target.every(v => arr.includes(v));
+let check = (arr, target) => target.every(v => arr.includes(v))
 
 module.exports.use = function (fastify) {
     fastify.post('/users', async (request, reply) => {
@@ -100,8 +100,6 @@ module.exports.use = function (fastify) {
             return reply.code(400).send({ message: "Invalid direction specified: " + request.body.direction })
         }
 
-        // TODO: Validate that the character may enter the room based on puzzle completion
-
         try {
             const character = await database.getCharacterForUser(request.params.email, request.params.name)
             const room = getNearbyRoom(character.currentRoom, request.body.direction)
@@ -120,7 +118,7 @@ module.exports.use = function (fastify) {
                         await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, (getPuzzle("p0").id))
                         reply.code(200).send({message: "Moved to " + room})
                     } else {
-                        let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions);
+                        let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions)
                         await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
                         reply.code(200).send({message: "Moved to " + room})
                     }
@@ -160,7 +158,7 @@ module.exports.use = function (fastify) {
                 reply.code(200).send()
             }
             else if(!check(updCharacter.puzzleCompletions, puzzles)) {
-                let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions);
+                let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions)
                 await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
                 reply.code(200).send()
             }
@@ -183,7 +181,7 @@ module.exports.use = function (fastify) {
                 reply.code(200).send({message: "Completed Puzzles in Room: " + puzzles.length + "/" + puzzles.length})
             }
             else if(!check(character.puzzleCompletions, puzzles)) {
-                let dif = await nextPuzzle(puzzles, character.puzzleCompletions);
+                let dif = await nextPuzzle(puzzles, character.puzzleCompletions)
                 reply.code(200).send({message: "Completed Puzzles in Room: " + (puzzles.length-dif.length) + "/" + puzzles.length})
             }
             else {
@@ -197,7 +195,7 @@ module.exports.use = function (fastify) {
 
     fastify.get('/leaderboard', async (request, reply) => {
         try {
-            let leaderboard = await getLeaderboard();
+            let leaderboard = await getLeaderboard()
             reply.code(200).send(leaderboard)
         } catch (e) {
             reply.code(400).send({ message: e.message, info: e.errInfo })
