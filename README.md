@@ -1,6 +1,7 @@
-# MUDPY WEBAPPLICATION
+# MUDPY WEBAPPLICATION  
 
-![4eccb72e5b90b5097fd86fd755eb236a](https://github.zhaw.ch/storage/user/2958/files/ac8fc31d-1cab-445b-8da1-9570cec5bae7)
+![4eccb72e5b90b5097fd86fd755eb236a](https://github.zhaw.ch/storage/user/2958/files/ac8fc31d-1cab-445b-8da1-9570cec5bae7)  
+The app Frontend is divided into 4 parts.
 
 ## Components
 ### Codeeditor
@@ -16,4 +17,9 @@ The Terminal is the core of the application and we navigate the game with help o
 
 
 ### Map
+![6f4224f0d879102d9635d8dfacffd55f](https://github.zhaw.ch/storage/user/2958/files/f3628ee3-6ea5-4bfa-82b4-ee7aa5f9a628)  
+On the map we can see where we are currently, which rooms are where and which we completed, keys located in rooms and locked rooms
+
 ### Information
+![8d07630cb15302e930cc4a3d1adc31fa](https://github.zhaw.ch/storage/user/2958/files/705bc71d-9745-4b64-bea9-20906d502cda)
+Here we can see our score, how many characters are in our room and our current task
