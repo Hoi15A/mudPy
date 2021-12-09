@@ -79,7 +79,7 @@ function menu() {
     term.writeln('\x1B[0msubmit        |      submits code for evaluation')
     term.writeln('\x1B[0mtask          |      Shows current task')
     term.writeln('\x1B[0mclear         |      clears the console')
-    term.writeln('\x1B[0mstartmenu     |      shows startmenu again with character create and chose option')
+    term.writeln('\x1B[0mstartmenu     |      shows startmenu again')
     term.writeln('\x1B[0msouth         |      move south')
     term.writeln('\x1B[0mnorth         |      move north')
     term.writeln('\x1B[0mwest          |      move west')
