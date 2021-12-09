@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb")
+const {MongoClient} = require("mongodb")
 
 const client = new MongoClient(process.env.MONGODB_CONNSTRING)
 const DATABASE = "pymud"
@@ -6,7 +6,7 @@ const db = client.db(DATABASE)
 
 async function prepDatabase() {
     await client.connect()
-    if (!await db.listCollections({ name: "users" }).hasNext()) {
+    if (!await db.listCollections({name: "users"}).hasNext()) {
         await db.createCollection("users", {
             validator: {
                 $jsonSchema: {
@@ -97,7 +97,7 @@ module.exports = {
 
         const users = db.collection('users')
 
-        const user = await users.findOne({ email })
+        const user = await users.findOne({email})
         await client.close()
         return user
     },
@@ -106,14 +106,14 @@ module.exports = {
 
         const users = db.collection('users')
 
-        await users.updateOne({ email }, { $push: { characters: character } })
+        await users.updateOne({email}, {$push: {characters: character}})
         await client.close()
     },
     deleteCharacterForUser: async (email, charName) => {
         await client.connect()
 
         const users = db.collection('users')
-        await users.updateOne({ email }, { $pull: { characters: {name: charName}}})
+        await users.updateOne({email}, {$pull: {characters: {name: charName}}})
         await client.close()
     },
     getCharacterForUser: async (email, charName) => {
@@ -121,7 +121,7 @@ module.exports = {
 
         const users = db.collection('users')
 
-        const user = await users.findOne({ email, "characters.name": charName })
+        const user = await users.findOne({email, "characters.name": charName})
         if (!user) {
             await client.close()
             return null
@@ -134,7 +134,7 @@ module.exports = {
         await client.connect()
 
         const users = db.collection('users')
-        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentRoom": position } })
+        await users.updateOne({email, "characters.name": charName}, {$set: {"characters.$.currentRoom": position}})
         await client.close()
         return true
     },
@@ -144,9 +144,9 @@ module.exports = {
         const users = db.collection('users')
 
         let score = pointsChar + points
-        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.points": score } })
-        await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.roomCompletions": room.id } })
-        if(room.keys.length > 0) {
+        await users.updateOne({email, "characters.name": charName}, {$set: {"characters.$.points": score}})
+        await users.updateOne({email, "characters.name": charName}, {$push: {"characters.$.roomCompletions": room.id}})
+        if (room.keys.length > 0) {
             for (const element of (room.keys)) {
                 await users.updateOne({email, "characters.name": charName}, {$push: {"characters.$.keys": element}})
             }
@@ -160,9 +160,12 @@ module.exports = {
         const users = db.collection('users')
 
         let score = pointsChar + points
-        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.points": score } })
-        
-        await users.updateOne({ email, "characters.name": charName }, { $push: { "characters.$.puzzleCompletions": puzzle.id } })
+        await users.updateOne({email, "characters.name": charName}, {$set: {"characters.$.points": score}})
+
+        await users.updateOne({
+            email,
+            "characters.name": charName
+        }, {$push: {"characters.$.puzzleCompletions": puzzle.id}})
         await client.close()
         return true
     },
@@ -170,7 +173,7 @@ module.exports = {
         await client.connect()
 
         const users = db.collection('users')
-        await users.updateOne({ email, "characters.name": charName }, { $set: { "characters.$.currentPuzzle": puzzle } })
+        await users.updateOne({email, "characters.name": charName}, {$set: {"characters.$.currentPuzzle": puzzle}})
         await client.close()
         return true
     },

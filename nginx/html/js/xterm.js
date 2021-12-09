@@ -86,6 +86,7 @@ function menu() {
     term.writeln('\x1B[0meast          |      move east')
     term.writeln('\x1B[0mchat          |      send a message to chat')
     term.writeln('\x1B[0mprogress      |      puzzle progress of room')
+    term.writeln('\x1B[0mkeys          |      check your keys')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
@@ -269,6 +270,10 @@ async function coreMain(keysEntered) {
     } else if (keysEntered.valueOf() === "progress") {
         let roomprogress = await axios.get(user + '/characters/' + character.name + '/roomprogress')
         term.writeln('\x1b[0m' + roomprogress.data.message + '\x1B[0m')
+        term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
+    } else if (keysEntered.valueOf() === "keys") {
+        let keys = await axios.get(user + '/characters/' + character.name + '/keys')
+        term.writeln('\x1b[0m' + keys.data.message + '\x1B[0m')
         term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
     } else {
         term.writeln('\r')

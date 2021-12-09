@@ -20,14 +20,14 @@ module.exports.use = function (fastify) {
             let existingUser = await database.getUserByEmail(request.body.email)
 
             if (existingUser) {
-                reply.code(400).send({ message: "User already exists" })
+                reply.code(400).send({message: "User already exists"})
                 return
             }
 
             let user = await database.addUser(request.body)
             reply.code(200).send(user)
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
@@ -36,7 +36,7 @@ module.exports.use = function (fastify) {
             const user = await database.getUserByEmail(request.params.email)
             reply.code(200).send(user)
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
@@ -46,7 +46,7 @@ module.exports.use = function (fastify) {
             const characterExists = await database.getCharacterForUser(request.params.email, request.body.name)
             // TODO: validate that a name was passed
             if (characterExists) {
-                reply.code(400).send({ message: "Character already exists" })
+                reply.code(400).send({message: "Character already exists"})
                 return
             }
 
@@ -61,7 +61,7 @@ module.exports.use = function (fastify) {
             await database.createCharacterForUser(request.params.email, character)
             reply.code(210).send()
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
@@ -69,13 +69,13 @@ module.exports.use = function (fastify) {
         try {
             const characterExists = await database.getCharacterForUser(request.params.email, request.params.name)
             if (!characterExists) {
-                reply.code(400).send({ message: "Character doesn't exists" })
+                reply.code(400).send({message: "Character doesn't exists"})
                 return
             }
             await database.deleteCharacterForUser(request.params.email, request.params.name)
             reply.code(210).send()
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
@@ -84,20 +84,20 @@ module.exports.use = function (fastify) {
             const character = await database.getCharacterForUser(request.params.email, request.params.name)
 
             if (!character) {
-                reply.code(400).send({ message: "Character does not exist" })
+                reply.code(400).send({message: "Character does not exist"})
             }
 
             reply.code(200).send(character)
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
     fastify.post('/users/:email/characters/:name/move', async (request, reply) => {
         if (!request.body.direction) {
-            return reply.code(400).send({ message: "No direction specified" })
+            return reply.code(400).send({message: "No direction specified"})
         } else if (!["north", "south", "east", "west"].includes(request.body.direction)) {
-            return reply.code(400).send({ message: "Invalid direction specified: " + request.body.direction })
+            return reply.code(400).send({message: "Invalid direction specified: " + request.body.direction})
         }
 
         try {
@@ -122,23 +122,21 @@ module.exports.use = function (fastify) {
                         await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
                         reply.code(200).send({message: "Moved to " + room})
                     }
-                }
-                else if(!checkedKeys) {
+                } else if (!checkedKeys) {
                     let dif = await nextPuzzle(((getRoom(room)).keys_required), character.keys)
                     console.log(dif)
-                    if(dif.length > 0) {
-                        reply.code(400).send({ message: "Cannot move to that room, missing keys: " + dif})
-                    }
-                    else {
-                        reply.code(400).send({ message: "Cannot move in that direction" })
+                    if (dif.length > 0) {
+                        reply.code(400).send({message: "Cannot move to that room, missing keys: " + dif})
+                    } else {
+                        reply.code(400).send({message: "Cannot move in that direction"})
                     }
                 }
             } else {
-                reply.code(400).send({ message: "Cannot move in that direction" })
+                reply.code(400).send({message: "Cannot move in that direction"})
             }
 
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
 
     })
@@ -156,18 +154,16 @@ module.exports.use = function (fastify) {
                 await database.updateCharacterRoomCompletitions(request.params.email, request.params.name, room, room.points, updCharacter.points)
                 await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, (getPuzzle("p0").id))
                 reply.code(200).send()
-            }
-            else if(!check(updCharacter.puzzleCompletions, puzzles)) {
+            } else if (!check(updCharacter.puzzleCompletions, puzzles)) {
                 let dif = await nextPuzzle(puzzles, updCharacter.puzzleCompletions)
                 await database.updateCharacterCurrentPuzzle(request.params.email, request.params.name, dif[0])
                 reply.code(200).send()
-            }
-            else {
+            } else {
                 reply.code(400).send()
             }
 
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
 
     })
@@ -179,17 +175,29 @@ module.exports.use = function (fastify) {
             const puzzles = getPuzzlesofRoom(room.id)
             if (check(character.puzzleCompletions, puzzles)) {
                 reply.code(200).send({message: "Completed Puzzles in Room: " + puzzles.length + "/" + puzzles.length})
-            }
-            else if(!check(character.puzzleCompletions, puzzles)) {
+            } else if (!check(character.puzzleCompletions, puzzles)) {
                 let dif = await nextPuzzle(puzzles, character.puzzleCompletions)
-                reply.code(200).send({message: "Completed Puzzles in Room: " + (puzzles.length-dif.length) + "/" + puzzles.length})
-            }
-            else {
+                reply.code(200).send({message: "Completed Puzzles in Room: " + (puzzles.length - dif.length) + "/" + puzzles.length})
+            } else {
                 reply.code(400).send()
             }
 
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
+        }
+    })
+
+    fastify.get('/users/:email/characters/:name/keys', async (request, reply) => {
+        try {
+            const character = await database.getCharacterForUser(request.params.email, request.params.name)
+            if (character.keys) {
+                reply.code(200).send({message: "Keys: " + character.keys})
+            } else {
+                reply.code(400).send()
+            }
+
+        } catch (e) {
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 
@@ -198,7 +206,7 @@ module.exports.use = function (fastify) {
             let leaderboard = await getLeaderboard()
             reply.code(200).send(leaderboard)
         } catch (e) {
-            reply.code(400).send({ message: e.message, info: e.errInfo })
+            reply.code(400).send({message: e.message, info: e.errInfo})
         }
     })
 

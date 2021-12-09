@@ -1,4 +1,4 @@
-const fastify = require('fastify')({ logger: process.env.FASTIFY_LOGGER === 'true' || true })
+const fastify = require('fastify')({logger: process.env.FASTIFY_LOGGER === 'true' || true})
 const axios = require('axios').default
 const puzzleUtils = require('./puzzleUtils')
 
@@ -21,11 +21,13 @@ fastify.ready().then(() => {
     function getSocketsOfRoom(room) {
         return fastify.io.in(room).fetchSockets()
     }
+
     function updateInfo(room, numClients) {
         fastify.io.to(room).emit('info', {
             numUsers: numClients,
         })
     }
+
     fastify.io.on('connection', (socket) => {
 
         // when the client emits 'new message', this listens and executes
@@ -105,11 +107,11 @@ fastify.post('/submit/:puzzleID', async (request, reply) => {
     const code = request.body.code
 
     if (!puzzle) {
-        return reply.code(400).send({ message: 'Puzzle not found' })
+        return reply.code(400).send({message: 'Puzzle not found'})
     }
 
     if (!code) {
-        return reply.code(400).send({ message: 'Missing code' })
+        return reply.code(400).send({message: 'Missing code'})
     }
 
     let resp

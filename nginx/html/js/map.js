@@ -4,8 +4,8 @@ function drawMap(rc, cr, keysCollected) {
     let map = [""]
     map.push('P = Player, X = completed Rooms')
     map.push("\n")
-    map.push("<span style=\"color:#04e90c\">" + "k1 = key 1  " + "</span>"
-        + "<span style=\"color:red\">" + "1 = locked with key #" + "</span>")
+    map.push("<span style=\"color:#04e90c\">" + "k# = key number, " + "</span>"
+        + "<span style=\"color:red\">" + "# = locked key #" + "</span>")
     map.push("\n\n")
 
     function drawV(floor, offset) {
