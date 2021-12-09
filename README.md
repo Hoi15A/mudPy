@@ -24,5 +24,5 @@ When we type help in terminal we can get the overview of available commands.
 On the map we can see where we are currently, which rooms are where and which we completed, keys located in rooms and locked rooms.
 
 #### Information
-![8d07630cb15302e930cc4a3d1adc31fa](https://github.zhaw.ch/storage/user/2958/files/705bc71d-9745-4b64-bea9-20906d502cda)
+![8d07630cb15302e930cc4a3d1adc31fa](https://github.zhaw.ch/storage/user/2958/files/705bc71d-9745-4b64-bea9-20906d502cda)  
 Here we can see our score, how many characters are in our room and our current task.
