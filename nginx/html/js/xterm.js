@@ -6,6 +6,11 @@ const buttonChat = document.getElementById('chat')
 const score = document.querySelector('#score')
 const usersChatroom = document.querySelector('#usersinChatroom')
 const chatToggle = document.getElementById("chatToggle")
+const buttonLogin = document.getElementById('login')
+const loginSendButton = document.getElementById('loginSend')
+const modalLogin = document.getElementById('modal')
+const modalClose = document.getElementById('modal-close')
+
 
 const connectionOptions = {
     "force new connection": true,
@@ -25,9 +30,8 @@ let characters
 let character
 let chatUsername
 
-//TODO hardcoded user update this on login
-const userEmail = 'example@students.zhaw.ch'
-const user = '/api/users/' + userEmail
+let userEmail
+let user
 
 let term = new Terminal({
     cursorBlink: true,
@@ -48,8 +52,6 @@ term.open(terminal)
 fitAddon.fit()
 
 term.writeln('Welcome to \x1B[1;3;31mmudpy 1.0\x1B[0m')
-startMenu()
-main()
 
 async function startMenu() {
     start = true
@@ -524,5 +526,25 @@ buttonChat.addEventListener('click', async _ => {
         buttonChat.classList.add("is-black")
         socket.emit('leave room', charData.data.currentRoom)
         usersChatroom.textContent = 'Roomchat OFF'
+    }
+})
+
+buttonLogin.addEventListener('click', async _ => {
+    modalLogin.classList.add("is-active")
+})
+
+modalClose.addEventListener('click', async _ => {
+    modalLogin.classList.remove("is-active")
+})
+
+loginSendButton.addEventListener('click', _ => {
+    //TODO LOGIN AWAIT CALL
+    let loginResponse = true
+    if(loginResponse) {
+        modalLogin.classList.remove("is-active")
+        //TODO LOGIN AWAIT CALL
+        userEmail = 'example@students.zhaw.ch'
+        user = '/api/users/' + userEmail
+        startMenu().then(() => main())
     }
 })

@@ -15,8 +15,51 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/xterm-addon-fit@0.6.0-beta.6/lib/xterm-addon-fit.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet"/>
 </head>
 <body class="has-background-grey-dark">
+<div class="modal" id="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <section class="is-primary is-fullheight">
+            <div class="hero-body">
+                <div class="container">
+                    <div class="columns is-centered">
+                        <div class="column">
+                            <form action="" class="box">
+                                <div class="field">
+                                    <label for="" class="label">Email</label>
+                                    <div class="control has-icons-left">
+                                        <input type="email" placeholder="e.g. kuerzel@students.zhaw.ch" class="input"
+                                               required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-envelope"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label for="" class="label">Password</label>
+                                    <div class="control has-icons-left">
+                                        <input type="password" placeholder="*******" class="input" required>
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-lock"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <button class="button is-black" id="loginSend">
+                                        Login
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <button class="modal-close" id="modal-close"></button>
+</div>
 
 <nav aria-label="main navigation" class="navbar is-black" role="navigation">
     <div class="navbar-menu is-active" id="navbarBasicExample">
@@ -26,7 +69,7 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
-                    <a class="button is-light">
+                    <a class="button is-light" id="login">
                         <strong>Log in</strong>
                     </a>
                 </div>
@@ -63,7 +106,8 @@
                 <div class="columns" id="gameDiv">
                     <div class="column"><p class="is-primary has-background-black">Score: <span id="score">0</span></p>
                     </div>
-                    <div class="column"><p class="is-primary has-background-black">Users in Room: <span id="usersinChatroom">0</span></p>
+                    <div class="column"><p class="is-primary has-background-black">Users in Room: <span
+                            id="usersinChatroom">0</span></p>
                     </div>
                 </div>
             </div>
