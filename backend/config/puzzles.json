@@ -3,7 +3,7 @@
     {
       "id": "p0",
       "name": "No Puzzle currently",
-      "points": 5,
+      "points": 0,
       "problem": "No Puzzle currently",
       "expectedOutput": "54363456344532534534534"
     },
@@ -16,7 +16,7 @@
     },
     {
       "id": "p2",
-      "name": "Hello World",
+      "name": "Float",
       "points": 5,
       "problem": "Print the floating point number 7",
       "expectedOutput": "7.0"
@@ -25,43 +25,43 @@
       "id": "p3",
       "name": "Hello World",
       "points": 5,
-      "problem": "print on a 1st line: First Line<br />On a second line print: Second Line",
+      "problem": "print on a 1st line: First Line\nOn a second line print: Second Line",
       "expectedOutput": "First line\nSecond line"
     },
     {
       "id": "p4",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print out \"John\"",
+      "expectedOutput": "\"John\""
     },
     {
       "id": "p5",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "assign a variable with a value 3 and print it",
+      "expectedOutput": "3"
     },
     {
       "id": "p6",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print the type of a variable with a value 3",
+      "expectedOutput": "<class 'int'>"
     },
     {
       "id": "p7",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "cast the variable 3 to a string and print it's type",
+      "expectedOutput": "<class 'str'>"
     },
     {
       "id": "p8",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "assign a dictionary with a name attribute of value John and age attribute with value 40, then print it and it's type",
+      "expectedOutput": "{'name': 'John', 'age': 36}\n<class 'dict'>"
     },
     {
       "id": "p9",
@@ -81,15 +81,15 @@
       "id": "p11",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "Get the characters from position 2 to position 6 (not included) of Hello, World!",
+      "expectedOutput": "llo,"
     },
     {
       "id": "p12",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "Split the String Hello, World! at the comma",
+      "expectedOutput": "['Hello', ' World!']"
     },
     {
       "id": "p1",
@@ -123,15 +123,15 @@
       "id": "p16",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "Divide 5666 by 25 and print the result",
+      "expectedOutput": "226.64"
     },
     {
       "id": "p17",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "Divide 5666 by 25 and print the result and round the result down to the nearest whole number",
+      "expectedOutput": "226"
     },
     {
       "id": "p18",
@@ -158,8 +158,8 @@
       "id": "p21",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "Loop through the letters in the word \"banana\":",
+      "expectedOutput": "b\na\nn\na\nn\na"
     },
     {
       "id": "p22",
@@ -193,50 +193,50 @@
       "id": "p26",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print out a list containing banana, cherry and an apple",
+      "expectedOutput": "['banana', 'cherry', 'apple']"
     },
     {
       "id": "p27",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print out the length of the list containing banana, cherry and an apple",
+      "expectedOutput": "3"
     },
     {
       "id": "p28",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print out the alphabetically sorted list containing banana, cherry and an apple",
+      "expectedOutput": "['apple', 'banana', 'cherry']"
     },
     {
       "id": "p29",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "assign two lists one with adjectives blue, fancy, small and one with fruits kiwi, mango, apple, then loop and print every adjective with every fruit",
+      "expectedOutput": "blue kiwi\nblue mango\nblue apple\nfancy kiwi\nfancy mango\nfancy apple\nsmall kiwi\nsmall mango\nsmall apple"
     },
     {
       "id": "p30",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print all numbers in the range of 2678 and 4055 with an increment of 89",
+      "expectedOutput": "2678\n2767\n2856\n2945\n3034\n3123\n3212\n3301\n3390\n3479\n3568\n3657\n3746\n3835\n3924\n4013"
     },
     {
       "id": "p31",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "create a date object with year 2020, month 5 and day 17",
+      "expectedOutput": "2020-05-17 00:00:00"
     },
     {
       "id": "p32",
       "name": "Hello World",
       "points": 5,
-      "problem": "print Hello World!",
-      "expectedOutput": "Hello World!"
+      "problem": "print all numbers multiplied by 5.6 between 246722 and 248999 incremented by 177",
+      "expectedOutput": "1381643.2\n1382634.4\n1383625.5999999999\n1384616.7999999998\n1385608.0\n1386599.2\n1387590.4\n1388581.5999999999\n1389572.7999999998\n1390564.0\n1391555.2\n1392546.4\n1393537.5999999999"
     },
     {
       "id": "p33",

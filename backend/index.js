@@ -126,7 +126,6 @@ fastify.post('/submit/:puzzleID', async (request, reply) => {
 
     return {
         stdout: resp.data.stdout.trim(),
-        expected: puzzle.expectedOutput,
         success: (resp.data.stdout.trim() === puzzle.expectedOutput && resp.data.returncode === 0)
     }
 })

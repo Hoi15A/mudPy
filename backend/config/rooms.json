@@ -1,250 +1,195 @@
 {
   "rooms": [
     {
-      "id": "example",
-      "name": "Example Room",
+      "id": "print  ",
       "puzzles": [
         "p1",
         "p2",
         "p3",
-        "p4",
-        "p5"
+        "p4"
       ],
       "keys": [
         "k1"
       ],
-      "available_after": 1635610606,
       "keys_required": [],
-      "required_rooms": null,
       "points": 10,
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": "example2",
+        "east": "data types",
         "west": null
       },
       "room_text": {
         "enter": "Welcome to the example room",
-        "leave": "You have left the example room",
-        "puzzle_success": "You have completed this rooms challenge, you may now move forward!",
-        "puzzle_fail": "This challenge seems to be harder than you thought, maybe consider a different approach."
+        "leave": "You have left the example room"
       }
     },
     {
-      "id": "example2",
-      "name": "Example Room two",
+      "id": "data types",
       "puzzles": [
+        "p5",
         "p6",
         "p7",
-        "p8",
-        "p9",
-        "p10"
+        "p8"
       ],
       "keys": [],
-      "available_after": 1635610696,
       "keys_required": [],
-      "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
-        "south": "example5",
+        "south": "loop    ",
         "east": null,
-        "west": "example"
+        "west": "print  "
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "problem": "print Hello World!",
-        "expectedOutput": "Hello World!"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example3",
-      "name": "Example Room two",
+      "id": "strings",
       "puzzles": [
         "p11",
-        "p12",
-        "p13",
-        "p14",
-        "p15"
+        "p12"
       ],
       "keys": [
-        "k2",
-        "k3"
+        "k2"
       ],
-      "available_after": 1635610696,
       "keys_required": [],
-      "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": "example5",
-        "west": "example4"
+        "east": "loop    ",
+        "west": "operators"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example4",
-      "name": "Example Room two",
+      "id": "operators",
       "puzzles": [
         "p16",
-        "p17",
-        "p18",
-        "p19",
-        "p20"
+        "p17"
       ],
-      "keys": [],
-      "available_after": 1635610696,
-      "keys_required": [],
-      "required_rooms": ["example"],
+      "keys": [
+        "k4"
+      ],
+      "keys_required": ["k3"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": "example3",
+        "east": "strings",
         "west": null
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example5",
-      "name": "Example Room two",
+      "id": "loop    ",
       "puzzles": [
-        "p21",
-        "p22",
-        "p23",
-        "p24",
-        "p25"
+        "p21"
       ],
       "keys": [],
-      "available_after": 1635610696,
       "keys_required": ["k1"],
-      "required_rooms": [
-        "example"
-      ],
       "points": 20,
       "adjacent_rooms": {
-        "north": "example2",
+        "north": "data types",
         "south": null,
-        "east": "example6",
-        "west": "example3"
+        "east": "list",
+        "west": "strings"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example6",
-      "name": "Example Room two",
+      "id": "list",
       "puzzles": [
         "p26",
-        "p27"
+        "p27",
+        "p28"
       ],
-      "keys": [],
-      "available_after": 1635610696,
-      "keys_required": [],
-      "required_rooms": ["example"],
+      "keys": ["k3"],
+      "keys_required": ["k2"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
-        "south": "example7",
+        "south": "for loops",
         "east": null,
-        "west": "example5"
+        "west": "loop    "
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example7",
-      "name": "Example Room two",
+      "id": "for loops",
       "puzzles": [
-        "p28",
-        "p29"
+        "p29",
+        "p30"
       ],
       "keys": [],
-      "available_after": 1635610696,
-      "keys_required": ["k2"],
-      "required_rooms": ["example"],
+      "keys_required": ["k4"],
       "points": 20,
       "adjacent_rooms": {
-        "north": "example6",
+        "north": "list",
         "south": null,
         "east": null,
-        "west": "example8"
+        "west": "datetime"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example8",
-      "name": "Example Room two",
+      "id": "datetime",
       "puzzles": [
-        "p30",
         "p31"
       ],
-      "keys": [],
-      "available_after": 1635610696,
+      "keys": [
+        "k5"
+      ],
       "keys_required": [],
-      "required_rooms": ["example"],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": "example7",
-        "west": "example9"
+        "east": "for loops",
+        "west": "lastroom"
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     },
     {
-      "id": "example9",
-      "name": "Example Room two",
+      "id": "lastroom",
       "puzzles": [
-        "p32",
-        "p33"
+        "p32"
       ],
       "keys": [],
-      "available_after": 1635610696,
-      "keys_required": [],
-      "required_rooms": ["example"],
+      "keys_required": [
+        "k5"
+      ],
       "points": 20,
       "adjacent_rooms": {
         "north": null,
         "south": null,
-        "east": "example8",
+        "east": "datetime",
         "west": null
       },
       "room_text": {
         "enter": "Welcome to the example2 room",
-        "leave": "You have left the example2 room",
-        "puzzle_success": "Congratulations",
-        "puzzle_fail": "Oh no"
+        "leave": "You have left the example2 room"
       }
     }
   ]

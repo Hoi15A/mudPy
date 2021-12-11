@@ -52,7 +52,7 @@ module.exports.use = function (fastify) {
 
             let character = request.body
             character.points = 0
-            character.currentRoom = "example"
+            character.currentRoom = "print  "
             character.currentPuzzle = "p1"
             character.roomCompletions = []
             character.puzzleCompletions = []
