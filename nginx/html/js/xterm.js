@@ -10,6 +10,7 @@ const buttonLogin = document.getElementById('login')
 const loginSendButton = document.getElementById('loginSend')
 const modalLogin = document.getElementById('modal')
 const modalClose = document.getElementById('modal-close')
+const loginInput = document.getElementById("email")
 
 
 const connectionOptions = {
@@ -291,7 +292,7 @@ function createSuccess() {
 }
 
 function creator(keysEntered) {
-    axios.post('api/users/example@students.zhaw.ch/characters', {
+    axios.post(user + '/characters', {
         //axios.post('/api/submit/' + pp, {
         name: keysEntered
     })
@@ -361,7 +362,7 @@ async function deleter(keysEntered) {
     deleted = true
     character = characters[keysEntered]
     if (character !== undefined) {
-        axios.delete('api/users/example@students.zhaw.ch/characters/' + character.name, {})
+        axios.delete(user + '/characters/' + character.name, {})
             .then(function (response) {
                 if (response.status === 210) {
                     deleteSuccess()
@@ -537,14 +538,23 @@ modalClose.addEventListener('click', async _ => {
     modalLogin.classList.remove("is-active")
 })
 
-loginSendButton.addEventListener('click', _ => {
+loginSendButton.addEventListener('click',  async _ => {
     //TODO LOGIN AWAIT CALL
     let loginResponse = true
-    if(loginResponse) {
+    if (loginResponse) {
+        let response = loginInput.value
         modalLogin.classList.remove("is-active")
-        //TODO LOGIN AWAIT CALL
-        userEmail = 'example@students.zhaw.ch'
+        let check = await axios.get('/api/users/' + response)
+        if (check.data === null) {
+            await axios.post('/api/users', {
+                email: response,
+                characters: []
+            })
+            check = await axios.get('/api/users/' + response)
+        }
+        userEmail = check.data.email
         user = '/api/users/' + userEmail
-        startMenu().then(() => main())
+        await startMenu()
+        main()
     }
 })
