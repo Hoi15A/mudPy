@@ -61,7 +61,7 @@
       "name": "Hello World",
       "points": 5,
       "problem": "assign a dictionary with a name attribute of value John and age attribute with value 40, then print it and it's type",
-      "expectedOutput": "{'name': 'John', 'age': 36}\n<class 'dict'>"
+      "expectedOutput": "{'name': 'John', 'age': 40}\n<class 'dict'>"
     },
     {
       "id": "p9",
