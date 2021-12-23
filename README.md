@@ -1,7 +1,20 @@
 # MUDPY WEBAPPLICATION
 
+## Installation/Deployment
 
-## Quick startguide
+### Prerequisites
+
+- A linux host with cgroups v1 enabled (this is due to [snekbox](https://github.com/python-discord/snekbox) upstream not having switched to v2, [it is however being worked on.](https://github.com/python-discord/snekbox/pull/127)). Cgroups v1 can be enabled on a machine if the default is v2 by [setting a kernel parameter.](https://wiki.archlinux.org/title/Cgroups#Enable_cgroup_v1)
+- docker
+- docker-compose
+
+### Setup
+
+1. Clone the repository
+2. Adjust nginx port in docker-compose.yml file (defaults is 80)
+3. Run with `docker-compose up -d`. This will build the mudpy image and then run it alongside all other required containers.
+
+## Usage
 ![4eccb72e5b90b5097fd86fd755eb236a](https://github.zhaw.ch/storage/user/2958/files/ac8fc31d-1cab-445b-8da1-9570cec5bae7)  
 The app frontend is divided into 4 parts.
 

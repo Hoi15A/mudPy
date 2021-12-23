@@ -6,11 +6,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
       - MONGODB_CONNSTRING=mongodb://pymud:MKWoTw2NyksLk3Xd77ckiCBe@mongodb
       - SNEKBOX_API=http://snekbox:8060
       - FASTIFY_LOGGER=false
-    restart: always
     depends_on:
       - mongodb
       - snekbox
@@ -20,11 +20,12 @@ services:
   mongodb:
     container_name: mongodb_pymud
     image: mongo:5.0
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=pymud
       - MONGO_INITDB_ROOT_PASSWORD=MKWoTw2NyksLk3Xd77ckiCBe
     ports:
-      - "27017:27017" # Disable in prod, used for debugging
+      - "27017:27017" # Either do not allow access via firewall rules or remove in prod
     networks:
       - web
     volumes:
@@ -33,6 +34,7 @@ services:
   nginx:
     container_name: nginx
     image: nginx:latest
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -47,6 +49,7 @@ services:
   snekbox:
     container_name: snekbox
     image: ghcr.io/python-discord/snekbox
+    restart: unless-stopped
     privileged: true
     #ipc: none
     #tty: true

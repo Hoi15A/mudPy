@@ -1,11 +1,12 @@
 FROM node:16
 
+LABEL org.opencontainers.image.authors="albreaus@students.zhaw.ch, holzest3@students.zhaw.ch"
+
+
 # Create app directory
 WORKDIR /usr/src/app
 
 # Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
 COPY ./package.json ./
 COPY ./package-lock.json ./
 
