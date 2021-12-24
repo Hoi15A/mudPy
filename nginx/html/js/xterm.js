@@ -90,6 +90,7 @@ function menu() {
     term.writeln('\x1B[0mchat          |      send a message to chat')
     term.writeln('\x1B[0mprogress      |      puzzle progress of room')
     term.writeln('\x1B[0mkeys          |      check your keys')
+    term.writeln('\x1B[0mleaderboard   |      shows leaderboard')
     term.write('\x1B[1;3;31mmudpy\x1B[0m $ ')
 }
 
