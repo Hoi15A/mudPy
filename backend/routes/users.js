@@ -42,9 +42,7 @@ module.exports.use = function (fastify) {
 
     fastify.post('/users/:email/characters', async (request, reply) => {
         try {
-            // TODO: Validate that user exists.
             const characterExists = await database.getCharacterForUser(request.params.email, request.body.name)
-            // TODO: validate that a name was passed
             if (characterExists) {
                 reply.code(400).send({message: "Character already exists"})
                 return
